@@ -1,10 +1,7 @@
 import { resolve } from "path";
 import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
 import { chromeExtension } from "vite-plugin-chrome-extension";
-import ViteComponents from "vite-plugin-components";
 import { viteRequire } from 'vite-require'
-import ViteIcons, { ViteIconsResolver } from "vite-plugin-icons";
 import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -33,19 +30,6 @@ export default defineConfig({
         }
     },
     plugins: [
-        vue(),
-        ViteComponents({
-            extensions: ["vue"],
-            // auto import icons
-            customComponentResolvers: [
-                // https://github.com/antfu/vite-plugin-icons
-                ViteIconsResolver({
-                    componentPrefix: ""
-                    // enabledCollections: ['carbon']
-                })
-            ]
-        }),
-        ViteIcons(),
         chromeExtension(),
         viteRequire()
     ]

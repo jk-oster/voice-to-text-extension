@@ -1,16 +1,42 @@
-import { saveToExtStorage, loadFromExtStorage, sendToRuntime } from "../service";
+import { saveObjectToExtStorage, loadExtStorage } from "../service";
+
+const inputs = document.querySelectorAll('input');
+
+function save() {
+    const data = {};
+
+    for(const elem of inputs) {
+        if (elem.type === 'checkbox') {
+            data[elem.id] = !!elem.checked;
+        }
+
+        if (elem.type === 'text') {
+            data[elem.id] = elem.value;
+        }
+    }
+
+    console.log('save', data)
+    saveObjectToExtStorage(data);
+}
 
 // on load, get the value of the whisper-api-key from storage and set the value of the input
 window.addEventListener('DOMContentLoaded', async () => {
-    const whisperApiKey = await loadFromExtStorage('whisperApiKey');
-    document.getElementById('whisper-api-key').value = whisperApiKey ?? '';
+    const config = await loadExtStorage();
 
-    // on input of the whsiper-api-key inout, save the value to storage
-    document.getElementById('whisper-api-key').addEventListener('input', (event) => {
-        const whisperApiKey = event.target.value;
-        if (!whisperApiKey) return;
-        saveToExtStorage('whisperApiKey', whisperApiKey);
-        sendToRuntime({ action: 'apiKeyAdded' });
-    });
+    // ['apiUrl', 'apiKey', 'copyToClipboard', 'insertIntoInput', 'showButton']
+    for (const elem of inputs) {
+        const value = config[elem.id];
+
+        // if input type = checkbox
+        if (elem.type === 'checkbox') {
+            elem.checked = value;
+            elem.addEventListener('click', save);
+        }
+
+        if (elem.type === 'text') {
+            elem.value = value;
+            elem.addEventListener('input', save);
+        }
+    }
 })
 

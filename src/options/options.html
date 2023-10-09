@@ -7,14 +7,35 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Voice to text</title>
+
 </head>
 
 <body>
-    <h1>Voice to text</h1>
+    <h1>Voice to text <img src="../assets/micro.svg" alt=""></h1>
 
-    <!-- Input for the Whisper API key -->
-    <label for="whisper-api-key">Whisper API key</label>
-    <input type="text" id="whisper-api-key" />
+    <form id="ext:config">
+
+        <!-- Input for the Whisper API key (bearer token) -->
+        <label for="apiKey">Transcription API key (Bearer token)</label>
+        <input type="text" name="apiKey" id="apiKey" value />
+
+        <!-- Input for Transcription Endpoint -->
+        <label for="apiUrl">Transcription Endpoint</label>
+        <input type="text" name="apiUrl" id="apiUrl" value />
+
+        <!-- Show button on page -->
+        <label for="showButton">Show button on page</label>
+        <input type="checkbox" name="showButton" id="showButton" />
+
+        <!-- Checkbox for insertInput -->
+        <label for="insertIntoInput">Insert transcription automatically to active input / query</label>
+        <input type="checkbox" name="insertIntoInput" id="insertIntoInput" />
+
+        <!-- Checkbox for copyToClipboard -->
+        <label for="copyToClipboard">Copy transcription to clipboard</label>
+        <input type="checkbox" name="copyToClipboard" id="copyToClipboard" />
+    </form>
+
 
     <script type="module" src="./options.js"></script>
 </body>

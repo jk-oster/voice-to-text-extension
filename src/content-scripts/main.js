@@ -1,80 +1,144 @@
-import { addExtensionMessageActionListener, loadFromExtStorage, sendToRuntime } from "../service";
+import { addExtensionMessageActionListener, getExtResUrl, loadFromExtStorage, sendToRuntime, callBGFunction, dispatchWindowMessage, loadExtStorage } from "../service";
 import recorder from "../recorder";
+import { actions, colors, status } from "../config";
 
-console.log('content script loaded');
+sendToRuntime({ action: actions.badge, data: status.stop });
 
-// Create a button to start/stop recording
+let config, promptTextarea, img;
 const recordButton = document.createElement('button');
-recordButton.id = 'record';
-recordButton.innerHTML = 'Start';
+recordButton.id = 'ext-voice-to-text';
+recordButton.ariaPressed = false;
+recordButton.title = 'Toggle audio (Ctrl+Shift+K)';
 
-// Style button so that it floats at the bottom right corner of the page
-recordButton.style.position = 'fixed';
-recordButton.style.bottom = '20px';
-recordButton.style.right = '20px';
-recordButton.style.zIndex = '9999';
-recordButton.style.backgroundColor = '#fff';
+const style = document.createElement('style');
 
-// Add the button to the page
-document.body.appendChild(recordButton);
+(async () => {
+    console.log('Content script loaded');
 
-sendToRuntime({ action: 'badge', data: 'stop' });
+    config = await loadExtStorage();
 
-addEventListener('startedRecording', () => {
-    recordButton.innerHTML = 'Stop';
-    // style button red
-    recordButton.style.backgroundColor = '#f00';
-    sendToRuntime({ action: 'badge', data: 'start' });
-});
-
-addEventListener('stoppedRecording', () => {
-    recordButton.innerHTML = 'Start';
-    // style button white
-    recordButton.style.backgroundColor = '#fff';
-    sendToRuntime({ action: 'badge', data: 'stop' });
-});
+    createButton();
+})();
 
 recordButton.addEventListener('click', () => {
     recorder.toggleRecording();
 });
-// Listen to keyboard shortcuts
-addExtensionMessageActionListener('toggleRecording', () => {
-    recorder.toggleRecording();
+
+addEventListener(actions.startedRecording, () => {
+    // style button red
+    recordButton.style.backgroundColor = colors.red;
+    img.src = getExtResUrl('assets/puff.svg'); // audio.svg
+    recordButton.ariaPressed = true;
+    sendToRuntime({ action: actions.badge, data: status.start });
 });
 
-// Listen to the 'audioBlobAvailable' event of the recorder
-addEventListener('audioBlobAvailable', (blob) => {
-    console.log('audioBlobAvailable', blob.detail)
+addEventListener(actions.stoppedRecording, () => {
+    // style button white
+    recordButton.style.backgroundColor = colors.violet;
+    img.src = getExtResUrl('assets/micro.svg');
+    recordButton.ariaPressed = false;
+    sendToRuntime({ action: actions.badge, data: status.stop });
+});
+
+addEventListener(actions.audioReady, (blob) => {
+    console.log(actions.audioReady, blob.detail)
     const formData = new FormData();
+
     formData.append('file', blob.detail, 'audio.wav');
-    formData.append('model', 'whisper-1');
+    config.formFields.forEach(entry => {
+        const { key, value } = entry;
+        formData.append(key, value);
+    });
+
     console.log('sending audio data to whisper api', formData);
 
     sendToWhisperAPI(formData);
 });
 
+addEventListener(actions.fetching, (fetching) => {
+    console.log(actions.fetching, fetching.detail)
+    if (fetching.detail) {
+        recordButton.style.backgroundColor = colors.orange;
+        img.src = getExtResUrl('assets/oval.svg');
+        sendToRuntime({ action: actions.badge, data: status.fetching });
+    } else {
+        recordButton.style.backgroundColor = colors.violet;
+        img.src = getExtResUrl('assets/micro.svg');
+        sendToRuntime({ action: actions.badge, data: status.stop });
+    }
+});
+
+// Listen to keyboard shortcuts
+addExtensionMessageActionListener(actions.toggleRecording, () => {
+    recorder.toggleRecording();
+});
+
+async function createButton() {
+    const showButton = await loadFromExtStorage('showButton');
+    let btnCss = await loadFromExtStorage('btnCss');
+
+    img = document.createElement('img');
+    img.src = getExtResUrl('assets/micro.svg');
+    img.alt = 'microphone';
+    img.width = 16;
+    img.height = 16;
+    recordButton.appendChild(img);
+
+    const elem = config.injectRecordButtonMatching.find(e => window.location.href.includes(e.url));
+    promptTextarea = document.querySelector(elem?.selector ?? 'lolidontmatchanythinghopefully');
+
+    console.log(showButton, btnCss, promptTextarea)
+
+    if (showButton) {
+        if (promptTextarea) {
+            console.log('promptTextarea found');
+            const classes = "p-1 rounded-md md:bottom-3 gizmo:md:bottom-2.5 md:p-2 md:right-3 enabled:bg-brand-purple gizmo:enabled:bg-transparent text-white gizmo:text-gray-500 gizmo:dark:text-gray-300 bottom-1.5 transition-colors"
+                .split(' ');
+            btnCss = "position: absolute; right: 50px; z-index: 9999; width: 32px; height: 32px; font-size: 10px; line-height: 1; text-align: center; cursor: pointer;";
+            recordButton.classList.add(...classes);
+
+            console.log(promptTextarea)
+            promptTextarea.insertAdjacentElement('afterend', recordButton);
+        } else {
+            console.log('no promptTextarea found');
+            document.body.appendChild(recordButton);
+        }
+    }
+
+    // Insert the style tag into the document
+    style.innerHTML = '#ext-voice-to-text {' + btnCss + '}';
+    document.head.appendChild(style);
+}
+
 function insertTextIntoInput(text) {
     const focusedElement = document.activeElement;
     if (focusedElement.tagName === 'INPUT' || focusedElement.tagName === 'TEXTAREA') {
-        focusedElement.value = text;
+        focusedElement.value += ' ' + text;
     }
     if (focusedElement.isContentEditable) {
-        focusedElement.textContent = text;
+        focusedElement.textContent += ' ' + text;
+    }
+    if (promptTextarea) {
+        promptTextarea.value += ' ' + text;
     }
 
     // Copy the text to the clipboard
     copyTextToClipboard(text);
+
+    dispatchWindowMessage(actions.resetRecording);
 }
 
 // Send the audio data to the Whisper API
 async function sendToWhisperAPI(formData) {
-    // Make an HTTP request to the Whisper API
-    // Replace 'YOUR_WHISPER_API_ENDPOINT' with the actual API endpoint
-    const whisperApiEndpoint = 'https://api.openai.com/v1/audio/transcriptions';
-    const whisperApiKey = await loadFromExtStorage('whisperApiKey');
+    // Make an HTTP request to the transcription API
+    const apiKey = await loadFromExtStorage('apiKey');
+    const apiUrl = await loadFromExtStorage('apiUrl');
+
+    dispatchWindowMessage(actions.fetching, true)
+
     const options = {
         headers: {
-            'Authorization': `Bearer ${whisperApiKey}`,
+            'Authorization': `Bearer ${apiKey}`,
         },
         method: 'POST',
         body: formData,
@@ -82,9 +146,11 @@ async function sendToWhisperAPI(formData) {
 
     console.log('Sending audio data to Whisper API:', options);
 
-    fetch(whisperApiEndpoint, options)
+    fetch(apiUrl, options)
         .then(response => response.json())
         .then(data => {
+            dispatchWindowMessage(actions.fetching, false)
+
             // Handle the response from the Whisper API
             console.log('Whisper API response:', data);
 
@@ -95,6 +161,8 @@ async function sendToWhisperAPI(formData) {
             }
         })
         .catch(error => {
+            dispatchWindowMessage(actions.fetching, false)
+
             console.error('Error sending audio data to Whisper API:', error);
         });
 }

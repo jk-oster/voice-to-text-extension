@@ -5,6 +5,10 @@ class AudioRecorder {
     constructor() {
         this.mediaRecorder = null;
         this.recordedChunks = [];
+
+        addEventListener('resetRecording', () => {
+            this.recordedChunks = [];
+        });
     }
 
     async startRecording() {
