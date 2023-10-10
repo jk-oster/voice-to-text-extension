@@ -26,6 +26,6 @@ The complete and up-to-date privacy policy can be accessed through the designate
 
 It is the user's responsibility to review the privacy policy before using the extension. Any updates or changes to the privacy policy will be reflected in the designated area, and users are encouraged to check periodically for updates.
 
-If you have any concerns or questions regarding the privacy policy, please contact us at [contact@email.com].
+If you have any concerns or questions regarding the privacy policy, please contact us at [jakobosterberger.com/contact](https://jakobosterberger.com/contact).
 
 *Last updated: 11.10.2023*
