@@ -56,11 +56,3 @@ addExtensionStorageValueListener('apiKey', (apiKey) => {
 browser.runtime.onMessage.addListener((message) => {
     console.log('logging received message from background service', message);
 });
-
-function test(text) {
-    return "ich bin das ergebnis einer test funktion mit argument " + text;
-}
-
-setupExposedBackGroundFunctions({
-    test,
-});
