@@ -29,7 +29,7 @@
     "default_title": "Record Voice (Ctrl+Shift+K)"
   },
   "permissions": ["tabs", "storage", "commands"],
-  "optional_permissions": ["clipboardWrite", "notifications"],
+  "optional_permissions": ["clipboardWrite"],
   "commands": {
     "toggleRecording": {
       "suggested_key": {

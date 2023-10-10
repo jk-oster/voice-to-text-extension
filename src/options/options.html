@@ -7,36 +7,412 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Voice to text</title>
-
 </head>
 
-<body>
-    <h1>Voice to text <img src="../assets/micro.svg" alt=""></h1>
+<body class="dark">
+    <header>
+        <nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900">
+            <div class="container flex flex-wrap justify-between items-center mx-auto">
+                <a href="#" class="flex items-center">
+                    <img src="../assets/icon48.png" class="mr-3 h-6 sm:h-9" alt="" />
+                    <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Voice to
+                        text</span>
+                </a>
+                <button data-collapse-toggle="navbar-default" type="button"
+                    class="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                    aria-controls="navbar-default" aria-expanded="false">
+                    <span class="sr-only">Open main menu</span>
+                    <img class="w-6 h-6" aria-hidden="true" src="../assets/icon48.png" />
+                </button>
+                <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+                    <ul
+                        class="flex flex-col p-4 mt-4 bg-gray-50 rounded-lg border border-gray-100 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                        <li>
+                            <a href="#about"
+                                class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">About</a>
+                        </li>
+                        <li>
+                            <a href="#core-settings"
+                                class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Core
+                                Settings</a>
+                        </li>
+                        <li>
+                            <a href="#display-settings"
+                                class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Display
+                                Settings</a>
+                        </li>
+                        <li>
+                            <a href="#contact"
+                                class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-    <form id="ext:config">
+    <main class="flex justify-center dark:bg-gray-900 py-20 px-4">
+        <div class="max-w-2xl dark:text-white text-base">
+            <h1 id="about"
+                class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+                Voice to Text
+            </h1>
+            <h2 class="text-2xl font-bold mb-2">Open transcription integration for ChatGPT and other webpages</h2>
+            <p class="mb-6 text-gray-700 dark:text-gray-300">
+                This extension gives you the ChatGPT Mobile feature 🚀 of using your voice as prompt input. However,
+                this
+                extension it is not limited to only ChatGPT, you can use it on any website 🌐.
+                It also has a few other additional features, such as automatically inserting the transcription into the
+                active input field, and copying the transcription to your clipboard 📑.
+            </p>
+            <h3 class="my-2 text-xl font-semibold text-gray-900 dark:text-white">
+                Features
+            </h3>
+            <ul class="mb-6 space-y-1 max-w-lg list-inside text-gray-500 dark:text-gray-400">
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 mr-1.5 text-green-500 dark:text-green-400 flex-shrink-0" fill="currentColor"
+                        viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    VOICE TO TEXT: Record your speech and use the transcription as input for ChatGPT or any other page
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 mr-1.5 text-green-500 dark:text-green-400 flex-shrink-0" fill="currentColor"
+                        viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    TEXT INSERTION: Insert the transcription automatically into the active input field on the page
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 mr-1.5 text-green-500 dark:text-green-400 flex-shrink-0" fill="currentColor"
+                        viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    COPY TO CLIPBOARD: Copy the transcription automatically to your clipboard and paste it anywhere you
+                    want
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 mr-1.5 text-green-500 dark:text-green-400 flex-shrink-0" fill="currentColor"
+                        viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    ChatGPT INTEGRATION: Injects a recording button into the ChatGPT interface, naturally integrated
+                    into the UI
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 mr-1.5 text-green-500 dark:text-green-400 flex-shrink-0" fill="currentColor"
+                        viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    CUSTOMIZABLE: You can customize the transcription endpoint, the request form data, the button
+                    injection and styling.
+                </li>
+            </ul>
 
-        <!-- Input for the Whisper API key (bearer token) -->
-        <label for="apiKey">Transcription API key (Bearer token)</label>
-        <input type="text" name="apiKey" id="apiKey" value />
+            <h3 id="usage" class="my-2 text-xl font-semibold text-gray-900 dark:text-white">
+                Usage
+            </h3>
+            <ol class="list-decimal list-inside text-gray-700 dark:text-gray-300">
+                <li>
+                    At first set your (OpenAI) API key 🔑 in the settings.
+                </li>
+                <li>
+                    Click on the "record" button 🎙️ on the page or the extension icon in the browser toolbar to start
+                    recording (allow microphone usage when asked).
+                </li>
+                <li>
+                    Finish / stop ⏹️ the recording by clicking the button again.
+                </li>
+                <li>
+                    As soon as the transcription 🔤 is finished the resulting text will be inserted into the active
+                    input field and copied to your clipboard by default.
+                </li>
+            </ol>
+            <p class="mb-6 mt-2 text-gray-700 dark:text-gray-300">
+                You can also use the keyboard ⌨️ shortcut <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd> to start ▶️
+                and stop ⏹️ the recording.
+            </p>
 
-        <!-- Input for Transcription Endpoint -->
-        <label for="apiUrl">Transcription Endpoint</label>
-        <input type="text" name="apiUrl" id="apiUrl" value />
+            <h3 id="privacy" class="my-2 text-xl font-semibold text-gray-900 dark:text-white">
+                Privacy
+            </h3>
+            <p class="mb-6 text-gray-700 dark:text-gray-300">
+                This extension uses Whisper from OpenAI to transcribe your recordings.
+                Whisper provides fast transcriptions of a wide range of languages.
+                If you have Whisper locally installed or want to use another transcription service you can change the
+                API endpoint and API key.
+                The only data that is stored permanently in the browser are the settings you find below.
+                Feel free to check out the code base on <a href="">GitHub</a>
+            </p>
 
-        <!-- Show button on page -->
-        <label for="showButton">Show button on page</label>
-        <input type="checkbox" name="showButton" id="showButton" />
+            <h3 id="permissions" class="my-2 text-xl font-semibold text-gray-900 dark:text-white">
+                Extension permissions
+            </h3>
+            <ul class="mb-6 list-inside list-disc text-gray-700 dark:text-gray-300">
+                <li>
+                    <strong>use microphone</strong>: Required to record your voice.
+                </li>
+                <li>
+                    <strong>tabs</strong>: Required to inject the recording button into the ChatGPT
+                    interface (and other pages) and paste transcriptions.
+                </li>
+                <li>
+                    <strong>clipboardWrite</strong>: Required to copy the transcription to your clipboard.
+                </li>
+                <li>
+                    <strong>storage</strong>: Required to store the settings you find below.
+                </li>
+                <li>
+                    <strong>commands</strong>: Required to bind the keyboard shortcut.
+                </li>
 
-        <!-- Checkbox for insertInput -->
-        <label for="insertIntoInput">Insert transcription automatically to active input / query</label>
-        <input type="checkbox" name="insertIntoInput" id="insertIntoInput" />
+            </ul>
 
-        <!-- Checkbox for copyToClipboard -->
-        <label for="copyToClipboard">Copy transcription to clipboard</label>
-        <input type="checkbox" name="copyToClipboard" id="copyToClipboard" />
-    </form>
+            <form id="ext:config" name="ext:config">
+                <fieldset>
+                    <h2 id="core-settings">
+                        <legend class="text-4xl mb-6 font-extrabold dark:text-white">
+                            Core settings
+                        </legend>
+                    </h2>
+
+                    <!-- Input for the Whisper API key (bearer token) -->
+                    <div class="mb-6">
+                        <label for="apiKey" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            Transcription API key (Bearer token)
+                        </label>
+                        <input type="text" id="apiKey" name="apiKey" value=""
+                            placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                            required />
+                        <p>See <a href="">here</a> how to obtain your OpenAI API key.</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="customEndpoint" class="inline-flex relative items-center mr-5 cursor-pointer">
+                            <input type="checkbox" id="customEndpoint" name="customEndpoint" class="sr-only peer" />
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-blue-500 dark:peer-focus:ring-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500">
+                            </div>
+                            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Use Custom API endpoint
+                            </span>
+                        </label>
+                    </div>
+
+                    <div id="custom-endpoint-options">
+                        <div class="mb-6">
+                            <label for="apiUrl" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Transcription Endpoint
+                            </label>
+                            <input type="text" id="apiUrl" name="apiUrl" value=""
+                                class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                                required />
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2" id="formFields">
+                            <div class="mb-6">
+                                <label for="formFields.0.key"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                    Request form key
+                                </label>
+                                <input type="text" id="formFields.0.key" name="formFields.0.key" value=""
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" />
+                            </div>
+
+                            <div class="mb-6">
+                                <label for="formFields.0.value"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                    Request form value
+                                </label>
+                                <input type="text" id="formFields.0.value" name="formFields.0.value" value=""
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" />
+                            </div>
+                        </div>
+
+                        <!--button id="addFormField" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+                            + Add request form field
+                        </button-->
+
+                    </div>
 
 
+                    <!-- Checkbox input with custom styling -->
+
+                    <div class="mb-6">
+                        <label for="insertIntoInput" class="inline-flex relative items-center mr-5 cursor-pointer">
+                            <input type="checkbox" id="insertIntoInput" name="insertIntoInput" class="sr-only peer" />
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-blue-500 dark:peer-focus:ring-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500">
+                            </div>
+                            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Insert transcription automatically to active input / query field on page
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="copyToClipboard" class="inline-flex relative items-center mr-5 cursor-pointer">
+                            <input type="checkbox" id="copyToClipboard" name="copyToClipboard" class="sr-only peer" />
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-blue-500 dark:peer-focus:ring-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500">
+                            </div>
+                            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Copy transcription to clipboard
+                            </span>
+                        </label>
+                    </div>
+
+                </fieldset>
+
+                <fieldset class="mt-4">
+                    <h2 id="display-settings">
+                        <legend class="text-4xl mb-6 font-extrabold dark:text-white">
+                            Display settings
+                        </legend>
+                    </h2>
+
+                    <div class="mb-6">
+                        <label for="showButton" class="inline-flex relative items-center mr-5 cursor-pointer">
+                            <input type="checkbox" id="showButton" name="showButton" class="sr-only peer" />
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-blue-500 dark:peer-focus:ring-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500">
+                            </div>
+                            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Show "record" button on every page
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="advancedDisplaySettings"
+                            class="inline-flex relative items-center mr-5 cursor-pointer">
+                            <input type="checkbox" id="advancedDisplaySettings" name="advancedDisplaySettings"
+                                class="sr-only peer" />
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-blue-500 dark:peer-focus:ring-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500">
+                            </div>
+                            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Advanced display settings (configure button styling and injection)
+                            </span>
+                        </label>
+                    </div>
+
+                    <div id="advanced-display-settings">
+
+                        <div class="mb-6">
+                            <label for="btnCss" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Default page button CSS
+                            </label>
+                            <textarea multiline aria-multiline="true" id="btnCss" name="btnCss" value=""
+                                class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light">
+                            </textarea>
+                        </div>
+
+
+                        <div class="grid grid-cols-3 gap-2" id="injectRecordButton">
+                            <div class="mb-6 flex flex-col justify-end">
+                                <label for="injectRecordButton.0.url"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                    Inject Button when URL matches (regex)
+                                </label>
+                                <input type="text" id="injectRecordButton.0.url" name="injectRecordButton.0.url"
+                                    value=""
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" />
+                            </div>
+
+                            <div class="mb-6 flex flex-col justify-end">
+                                <label for="injectRecordButton.0.selector"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                    CSS Selector for button injection (inserts button after the element)
+                                </label>
+                                <input type="text" id="injectRecordButton.0.selector"
+                                    name="injectRecordButton.0.selector" value=""
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" />
+                            </div>
+
+                            <div class="mb-6 flex flex-col justify-end">
+                                <label for="injectRecordButton.0.css"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                    CSS for selector injected button
+                                </label>
+                                <textarea multiline aria-multiline="true" id="injectRecordButton.0.css"
+                                    name="injectRecordButton.0.css" value=""
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light">
+                                </textarea>
+                            </div>
+                        </div>
+
+                        <!--button>+ Add Button Injection Rule</button-->
+                    </div>
+
+
+                </fieldset>
+            </form>
+
+
+            <div class="my-12 text-gray-900 dark:text-white">
+                <h2 id="contact" class="text-4xl mb-6 font-extrabold dark:text-white">
+                    Contact
+                </h2>
+                <p class="text-gray-700 dark:text-gray-300">
+                    Hey I am <a href="https://jkoster.com">Jakob Osterberger</a> the
+                    creator of this extension. If you need any support you can contact
+                    me <a href="https://jkoster.com/contact">though my website</a>.
+                    Contribution, pull requests and suggestions for improvements are
+                    very welcome.
+                </p>
+
+                <h3 class="my-4 text-xl font-semibold text-gray-900 dark:text-white">
+                    Credits
+                </h3>
+                <p class="text-gray-700 dark:text-gray-300">
+                    Thank's to the creator's of Whisper at OpenAi for their
+                    awesome work. Their effort rendered this extension possible.
+                </p>
+                <p class="text-gray-700 dark:text-gray-300">
+                    Furthermore, kodos to the creator of the
+                    <a href="https://github.com/StarkShang/vite-plugin-chrome-extension">Vite Chrome Extension
+                        Plugin</a>
+                    for enabeling fast and easy development with vite!
+                </p>
+            </div>
+
+        </div>
+
+    </main>
+    <footer class="p-4 bg-white shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800">
+        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023
+            <a href="https://jkoster.com/" class="hover:underline">Jakob Osterberger</a>. All Rights Reserved.
+        </span>
+        <ul class="flex flex-wrap items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+            <li>
+                <a href="#about" class="mr-4 hover:underline md:mr-6 ">About</a>
+            </li>
+            <li>
+                <a href="#privacy" class="mr-4 hover:underline md:mr-6">Privacy Policy</a>
+            </li>
+            <li>
+                <a href="#permissions" class="mr-4 hover:underline md:mr-6">Extension Permissions</a>
+            </li>
+            <li>
+                <a href="githublicense" class="mr-4 hover:underline md:mr-6">Licensing</a>
+            </li>
+            <li>
+                <a href="#contact" class="hover:underline">Contact</a>
+            </li>
+        </ul>
+    </footer>
     <script type="module" src="./options.js"></script>
 </body>
 

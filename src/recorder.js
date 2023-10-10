@@ -1,3 +1,11 @@
+/**
+ * Wrapper for the mediaRecorder API
+ * Records audio and creates a blob from it
+ * @emits audioBlobAvailable
+ * @emits startedRecording
+ * @emits stoppedRecording
+ * @listens resetRecording
+ */
 class AudioRecorder {
     mediaRecorder;
     recordedChunks = [];
@@ -60,5 +68,13 @@ class AudioRecorder {
 
 }
 
+/**
+ * Wrapper for the mediaRecorder API
+ * Records audio and creates a blob from it
+ * @emits audioBlobAvailable
+ * @emits startedRecording
+ * @emits stoppedRecording
+ * @listens resetRecording
+ */
 const recorder = new AudioRecorder();
 export default recorder;

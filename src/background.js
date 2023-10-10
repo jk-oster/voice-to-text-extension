@@ -9,41 +9,42 @@ import {
     saveObjectToExtStorage,
     loadFromExtStorage,
     addExtensionStorageValueListener,
+    openOptionsPage,
 } from "./service";
-import config, { actions } from "./config";
+import config, { ACTIONS } from "./config";
 
 browser.runtime.onInstalled.addListener(async () => {
     console.log("Background Service Installed");
 
-    
+
     // let url = browser.runtime.getURL("options/options.html");
     // await browser.tabs.create({ url });
-    
+
     setBadgeStatus(config.status.offline);
-    
+
     const oldConfig = await loadExtStorage() ?? {};
     console.log("Config", config);
     console.log("Config", oldConfig);
 
-    saveObjectToExtStorage({...config, ...oldConfig});
+    saveObjectToExtStorage({ ...config, ...oldConfig });
 
     const apiKey = await loadFromExtStorage("apiKey");
 
     if (!apiKey) {
         console.log("no whisper api key found");
-        browser.runtime.openOptionsPage();
+        openOptionsPage();
     }
 });
 
 addExtensionIconClickListener(() => {
-    sendToCurrentTab({ action: actions.toggleRecording });
+    sendToCurrentTab({ action: ACTIONS.toggleRecording });
 });
 
-addExtensionCommandListener(actions.toggleRecording, () => {
-    sendToCurrentTab({ action: actions.toggleRecording });
+addExtensionCommandListener(ACTIONS.toggleRecording, () => {
+    sendToCurrentTab({ action: ACTIONS.toggleRecording });
 });
 
-addExtensionMessageActionListener(actions.badge, ({ color, text }) => {
+addExtensionMessageActionListener(ACTIONS.badge, ({ color, text }) => {
     setBadgeStatus({ color, text });
 });
 
@@ -54,4 +55,12 @@ addExtensionStorageValueListener('apiKey', (apiKey) => {
 // Log all messages from the extension runtime
 browser.runtime.onMessage.addListener((message) => {
     console.log('logging received message from background service', message);
+});
+
+function test(text) {
+    return "ich bin das ergebnis einer test funktion mit argument " + text;
+}
+
+setupExposedBackGroundFunctions({
+    test,
 });

@@ -1,47 +1,49 @@
-import { addExtensionMessageActionListener, getExtResUrl, loadFromExtStorage, sendToRuntime, callBGFunction, dispatchWindowMessage, loadExtStorage } from "../service";
+import { addExtensionMessageActionListener, getExtResUrl, loadFromExtStorage, sendToRuntime, callBackgroundFunction, dispatchWindowMessage, loadExtStorage, focusLastFocusedTab, getExposedBackgroundFunctions } from "../service";
 import recorder from "../recorder";
-import { actions, colors, status } from "../config";
+import { STATUS, ACTIONS } from "../config";
+import { config as defaultConf } from "../config";
 
-sendToRuntime({ action: actions.badge, data: status.stop });
+let config = defaultConf;
+let promptTextarea;
 
-let config, promptTextarea, img;
 const recordButton = document.createElement('button');
-recordButton.id = 'ext-voice-to-text';
+recordButton.id = config.extBtnId;
 recordButton.ariaPressed = false;
 recordButton.title = 'Toggle audio (Ctrl+Shift+K)';
-
+const img = document.createElement('img');
+recordButton.appendChild(img);
 const style = document.createElement('style');
+
+function setStatus(status) {
+    img.src = getExtResUrl(status.img);
+    recordButton.style.background = status.color
+    sendToRuntime({ action: ACTIONS.badge, data: status });
+}
 
 (async () => {
     console.log('Content script loaded');
 
     config = await loadExtStorage();
 
-    createButton();
+    createUI();
 })();
 
 recordButton.addEventListener('click', () => {
     recorder.toggleRecording();
 });
 
-addEventListener(actions.startedRecording, () => {
-    // style button red
-    recordButton.style.backgroundColor = colors.red;
-    img.src = getExtResUrl('assets/puff.svg'); // audio.svg
+addEventListener(ACTIONS.startedRecording, () => {
+    setStatus(STATUS.start)
     recordButton.ariaPressed = true;
-    sendToRuntime({ action: actions.badge, data: status.start });
 });
 
-addEventListener(actions.stoppedRecording, () => {
-    // style button white
-    recordButton.style.backgroundColor = colors.violet;
-    img.src = getExtResUrl('assets/micro.svg');
+addEventListener(ACTIONS.stoppedRecording, () => {
+    setStatus(STATUS.stop)
     recordButton.ariaPressed = false;
-    sendToRuntime({ action: actions.badge, data: status.stop });
 });
 
-addEventListener(actions.audioReady, (blob) => {
-    console.log(actions.audioReady, blob.detail)
+addEventListener(ACTIONS.audioReady, (blob) => {
+    console.log(ACTIONS.audioReady, blob.detail)
     const formData = new FormData();
 
     formData.append('file', blob.detail, 'audio.wav');
@@ -55,68 +57,53 @@ addEventListener(actions.audioReady, (blob) => {
     sendToWhisperAPI(formData);
 });
 
-addEventListener(actions.fetching, (fetching) => {
-    console.log(actions.fetching, fetching.detail)
+addEventListener(ACTIONS.fetching, (fetching) => {
+    console.log(ACTIONS.fetching, fetching.detail)
     if (fetching.detail) {
-        recordButton.style.backgroundColor = colors.orange;
-        img.src = getExtResUrl('assets/oval.svg');
-        sendToRuntime({ action: actions.badge, data: status.fetching });
+        setStatus(STATUS.fetching);
     } else {
-        recordButton.style.backgroundColor = colors.violet;
-        img.src = getExtResUrl('assets/micro.svg');
-        sendToRuntime({ action: actions.badge, data: status.stop });
+        setStatus(STATUS.stop);
     }
 });
 
 // Listen to keyboard shortcuts
-addExtensionMessageActionListener(actions.toggleRecording, () => {
+addExtensionMessageActionListener(ACTIONS.toggleRecording, () => {
     recorder.toggleRecording();
 });
 
-async function createButton() {
+async function createUI() {
     const showButton = await loadFromExtStorage('showButton');
     let btnCss = await loadFromExtStorage('btnCss');
 
-    img = document.createElement('img');
-    img.src = getExtResUrl('assets/micro.svg');
-    img.alt = 'microphone';
-    img.width = 16;
-    img.height = 16;
-    recordButton.appendChild(img);
+    setStatus(STATUS.stop)
 
-    const elem = config.injectRecordButtonMatching.find(e => window.location.href.includes(e.url));
+    const elem = config.injectRecordButton.find(e => window.location.href.includes(e.url));
     promptTextarea = document.querySelector(elem?.selector ?? 'lolidontmatchanythinghopefully');
 
-    console.log(showButton, btnCss, promptTextarea)
-
-    if (showButton) {
-        if (promptTextarea) {
-            console.log('promptTextarea found');
-            const classes = "p-1 rounded-md md:bottom-3 gizmo:md:bottom-2.5 md:p-2 md:right-3 enabled:bg-brand-purple gizmo:enabled:bg-transparent text-white gizmo:text-gray-500 gizmo:dark:text-gray-300 bottom-1.5 transition-colors"
-                .split(' ');
-            btnCss = "position: absolute; right: 50px; z-index: 9999; width: 32px; height: 32px; font-size: 10px; line-height: 1; text-align: center; cursor: pointer;";
-            recordButton.classList.add(...classes);
-
-            console.log(promptTextarea)
-            promptTextarea.insertAdjacentElement('afterend', recordButton);
-        } else {
-            console.log('no promptTextarea found');
-            document.body.appendChild(recordButton);
-        }
+    if (promptTextarea) {
+        btnCss = elem?.css ?? btnCss;
+        promptTextarea.insertAdjacentElement('afterend', recordButton);
+    } else if (showButton) {
+        document.body.appendChild(recordButton);
     }
 
     // Insert the style tag into the document
-    style.innerHTML = '#ext-voice-to-text {' + btnCss + '}';
+    style.innerHTML = '#' + config.extBtnId + '{' + btnCss + '} #' + config.extBtnId + ' > img { width: 16; height = 16;}';
     document.head.appendChild(style);
 }
 
-function insertTextIntoInput(text) {
+async function insertTextIntoInput(text) {
+    // Focus last focused tab
+    // await focusLastFocusedTab();
+
     const focusedElement = document.activeElement;
-    if (focusedElement.tagName === 'INPUT' || focusedElement.tagName === 'TEXTAREA') {
-        focusedElement.value += ' ' + text;
-    }
-    if (focusedElement.isContentEditable) {
-        focusedElement.textContent += ' ' + text;
+    if (focusedElement) {
+        if (focusedElement.tagName === 'INPUT' || focusedElement.tagName === 'TEXTAREA') {
+            focusedElement.value += ' ' + text;
+        }
+        if (focusedElement.isContentEditable) {
+            focusedElement.textContent += ' ' + text;
+        }
     }
     if (promptTextarea) {
         promptTextarea.value += ' ' + text;
@@ -125,7 +112,8 @@ function insertTextIntoInput(text) {
     // Copy the text to the clipboard
     copyTextToClipboard(text);
 
-    dispatchWindowMessage(actions.resetRecording);
+    // Reset recordinf chunks to not send / append same recorded
+    dispatchWindowMessage(ACTIONS.resetRecording);
 }
 
 // Send the audio data to the Whisper API
@@ -134,7 +122,7 @@ async function sendToWhisperAPI(formData) {
     const apiKey = await loadFromExtStorage('apiKey');
     const apiUrl = await loadFromExtStorage('apiUrl');
 
-    dispatchWindowMessage(actions.fetching, true)
+    dispatchWindowMessage(ACTIONS.fetching, true)
 
     const options = {
         headers: {
@@ -149,7 +137,7 @@ async function sendToWhisperAPI(formData) {
     fetch(apiUrl, options)
         .then(response => response.json())
         .then(data => {
-            dispatchWindowMessage(actions.fetching, false)
+            dispatchWindowMessage(ACTIONS.fetching, false)
 
             // Handle the response from the Whisper API
             console.log('Whisper API response:', data);
@@ -161,9 +149,8 @@ async function sendToWhisperAPI(formData) {
             }
         })
         .catch(error => {
-            dispatchWindowMessage(actions.fetching, false)
-
-            console.error('Error sending audio data to Whisper API:', error);
+            dispatchWindowMessage(ACTIONS.fetching, false)
+            console.warn('Error sending audio data to Whisper API:', error);
         });
 }
 
@@ -187,21 +174,11 @@ function copyTextToClipboard(text) {
 }
 
 function fallbackCopyTextToClipboard(text) {
-    // Create a temporary textarea element
+    // Create a temporary textarea element and use old execCommand API
     const textarea = document.createElement('textarea');
-
-    // Set the value of the textarea to the text to be copied
     textarea.value = text;
-
-    // Append the textarea to the document
     document.body.appendChild(textarea);
-
-    // Select the text in the textarea
     textarea.select();
-
-    // Execute the browser's copy command
     document.execCommand('copy');
-
-    // Remove the textarea from the document
     document.body.removeChild(textarea);
 }

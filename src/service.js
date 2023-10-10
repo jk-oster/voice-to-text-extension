@@ -22,7 +22,7 @@ export const logMessage = ({ production, verbose }) => (...messages) => {
 //----------------------------------------------------------------
 
 /**
- * Creates a new tab in the browser.
+ * (BG only) Creates a new tab in the browser.
  * @param {string} url - The URL to open in the new tab.
  * @param {boolean} [active=true] - Whether to make the new tab active.
  * @returns {Promise<number>} - A Promise that resolves to the ID of the new tab.
@@ -32,7 +32,7 @@ export async function createTab(url, active = true) {
 }
 
 /**
- * Closes a tab in the browser.
+ * (BG only) Closes a tab in the browser.
  * @param {number} tabId - The ID of the tab to close.
  * @returns {Promise<void>} - A Promise that resolves when the tab has been closed.
  */
@@ -41,7 +41,7 @@ export async function closeTab(tabId) {
 }
 
 /**
- * Reloads a tab in the browser.
+ * (BG only) Reloads a tab in the browser.
  * @param {number} tabId - The ID of the tab to reload.
  * @returns {Promise<void>} - A Promise that resolves when the tab has been reloaded.
  */
@@ -50,7 +50,7 @@ export async function reloadTab(tabId) {
 }
 
 /**
- * Reloads all tabs in the browser.
+ * (BG only) Reloads all tabs in the browser.
  * @returns {Promise<void>} - A Promise that resolves when all tabs have been reloaded.
  */
 export async function reloadAllTabs() {
@@ -62,7 +62,7 @@ export async function reloadAllTabs() {
 }
 
 /**
- * Gets the URL of the current tab in the browser.
+ * (BG only) Gets the URL of the current tab in the browser.
  * @returns {Promise<string>} - A Promise that resolves to the URL of the current tab.
  */
 export async function getCurrTabUrl() {
@@ -70,7 +70,7 @@ export async function getCurrTabUrl() {
 }
 
 /**
- * Returns the ID of the currently active tab in the current window, if it matches the given URL pattern.
+ * (BG only) Returns the ID of the currently active tab in the current window, if it matches the given URL pattern.
  * @param {RegExp|null} [matches=null] - A regular expression to match against the URL of the current tab.
  * @returns {Promise<number|undefined>} - A Promise that resolves to the ID of the current tab, or undefined if no matching tab is found.
  */
@@ -93,12 +93,69 @@ export function getExtResUrl(pagePath) {
     return browser.runtime.getURL(pagePath);
 }
 
+/**
+ * (BG only) Gets the ID of the last focused tab in the browser.
+ * @returns {Promise<number>} - A Promise that resolves to the ID of the last focused tab.
+ */
+export async function getLastFocusedTabId() {
+    return browser.tabs.query({ active: true, lastFocusedWindow: true }).then((tabs) => tabs[0].id);
+}
+
+/**
+ * (BG only) Focus a specified tab
+ * @param {number} tabId 
+ */
+export async function focusTab(tabId) {
+    if (typeof browser.tabs.update === "function") return browser.tabs.update(tabId, { active: true });
+    else {
+        browser.tabs.get(tabId, function (tab) {
+            browser.tabs.highlight({ 'tabs': tab.index }, function () { });
+        });
+    }
+}
+
+/**
+ * (BG only) Focus the last focused tab in the browser.
+ * @returns {Promise<void>} - A Promise that resolves when the last focused tab has been focused.
+ */
+export async function focusLastFocusedTab() {
+    return getLastFocusedTabId().then((tabId) => focusTab(tabId));
+}
+
+/**
+ * Opens the options page for the extension.
+ * @param {string} url - The URL to open in the new tab.
+ */
+export async function openOptionsPage(path = 'options/options.html') {
+    if (typeof browser.runtime.openOptionsPage === "function") {
+        // BG context
+        browser.runtime.openOptionsPage();
+    } else if (typeof window === "object" && window) {
+        // CS context
+        window.open(browser.runtime.getURL(path));
+    }
+}
+
+
+/**
+ * (BG only) Executes scripts on a specified tab.
+ * @param {number} tabId - The ID of the tab to execute the script on.
+ * @param {string[]} files - An array of file paths to include in the script execution.
+ * @returns {Promise<void>} - A Promise that resolves when the script has been executed.
+ */
+export async function executeScriptOnTab(tabId, files = []) {
+    browser.scripting.executeScript({
+        target: { tabId },
+        files: files,
+    });
+}
+
 //----------------------------------------------------------------
 // Extension Messaging Service
 //----------------------------------------------------------------
 
 /**
- * Sends a message to the current tab (content script) that is a webpage using matching http / https .
+ * (BG only) Sends a message to the current tab (content script) that is a webpage using matching http / https .
  * @param {Object} message - The message to send to the tab.
  * @param {string} message.action - The action to perform.
  * @param {Object|null} message.data - The data to send along with the action.
@@ -114,7 +171,7 @@ export async function sendToCurrentTab(message = { action: '', data: null }) {
 }
 
 /**
- * Sends a message to a specified tab (content script).
+ * (BG only) Sends a message to a specified tab (content script).
  * @param {number} tabId - The ID of the tab to send the message to.
  * @param {Object} message - The message to send to the tab. Should have an 'action' property and a 'data' property.
  * @param {string} message.action - The action to perform.
@@ -123,7 +180,7 @@ export async function sendToCurrentTab(message = { action: '', data: null }) {
  */
 export async function sendToTab(tabId, message = { action: '', data: null }) {
     try {
-        console.log('sending to tab though browser', tabId, message);
+        console.log('sending to tab: ', tabId, message);
         await browser.tabs.sendMessage(tabId, message);
     } catch (e) {
         console.log(e)
@@ -131,8 +188,7 @@ export async function sendToTab(tabId, message = { action: '', data: null }) {
 }
 
 /**
- * Sends a message to the browser runtime (background service) with the given action and data.
- * 
+ * (CS only) Sends a message to the browser runtime (background service) with the given action and data.
  * @param {Object} message - The message object.
  * @param {string} message.action - The action to be performed.
  * @param {any} message.data - The data to be sent along with the action.
@@ -141,15 +197,15 @@ export async function sendToTab(tabId, message = { action: '', data: null }) {
  */
 export async function sendToRuntime({ action = '', data = null }, options = {}) {
     try {
-        console.log('sending to runtime from browser', action, data);
-        await browser.runtime.sendMessage({ action, data }, options);
+        console.log('sending to runtime: ', action, data);
+        return await browser.runtime.sendMessage({ action, data }, options);
     } catch (e) {
         console.log(e)
     }
 }
 
 /**
- * Sends a message to all tabs (content scripts) matching the specified query and URL match.
+ * (BG only) Sends a message to all tabs (content scripts) matching the specified query and URL match.
  * @param {Object} tabsQuery - The query to match tabs against.
  * @param {RegExp|null} urlMatch - The URL pattern to match tabs against.
  * @param {Object} message - The message to send.
@@ -160,10 +216,10 @@ export async function sendToRuntime({ action = '', data = null }, options = {}) 
 export async function sendToAllTabsMatching({ query: tabsQuery = {}, urlMatch = null }, { action = '', data = null }) {
     try {
         await browser.tabs.query(tabsQuery).then(async (tabs) => {
-            console.log('sending to all tabs though browser', tabs);
+            console.log('sending to all tabs', tabs);
             for (const tab of tabs) {
                 if (urlMatch && !urlMatch.test(tab.url)) continue;
-                console.log('sending to tab though browser', tab);
+                console.log('sending to tab', tab);
                 sendToTab(tab.id, { action, data });
             }
         });
@@ -183,7 +239,7 @@ export async function addExtensionMessageActionListener(action = 'update', callb
     try {
         browser.runtime.onMessage.addListener(async (message, sender, sendRes) => {
             if ('action' in message && message['action'] === action) {
-                console.log('received runtime message from browser', message);
+                console.log('received runtime message', message, sender);
                 callbackFn(message?.data ?? message, sender, sendRes);
             }
         });
@@ -193,7 +249,7 @@ export async function addExtensionMessageActionListener(action = 'update', callb
 }
 
 /**
- * Add a listener in the runtime (background service) for clicks on the extension icon in the browser toolbar (top right)
+ * (BG only) Add a listener in the runtime (background service) for clicks on the extension icon in the browser toolbar (top right)
  * @param {function} callbackFn - The function to be called when the icon is clicked.
  * @returns {Promise<void>}
  */
@@ -201,7 +257,7 @@ export function addExtensionIconClickListener(callbackFn = async (tab, info) => 
 }) {
     try {
         browser.action.onClicked.addListener(async (tab, info) => {
-            console.log('received icon click from browser', tab, info);
+            console.log('received icon click', tab, info);
             callbackFn(tab, info);
         });
     }
@@ -211,7 +267,7 @@ export function addExtensionIconClickListener(callbackFn = async (tab, info) => 
 }
 
 /**
- * Adds a listener in the runtime (background service) for a specific extension command (keyboard shortcut)
+ * (BG only) Adds a listener in the runtime (background service) for a specific extension command (keyboard shortcut)
  * @param {string} command - The name of the command to listen for.
  * @param {function} callbackFn - The function to call when the command is received.
  * @returns {Promise<void>}
@@ -220,7 +276,7 @@ export function addExtensionCommandListener(command = 'update', callbackFn = (co
 }) {
     try {
         browser.commands.onCommand.addListener(async (command, tab) => {
-            console.log('received command from browser', command, tab);
+            console.log('received command', command, tab);
             callbackFn(command, tab);
         });
     } catch (e) {
@@ -229,17 +285,17 @@ export function addExtensionCommandListener(command = 'update', callbackFn = (co
 }
 
 /**
- * Dispatches a custom event with the specified action and data to the window object.
+ * (CS only) Dispatches a custom event with the specified action and data to the window object.
  * @param {string} action - The name of the custom event to dispatch.
  * @param {object} data - The data to be passed along with the custom event.
  */
 export function dispatchWindowMessage(action = '', data = {}) {
-    if (!window) {
-        console.log('no window context found');
-        return;
+    if (typeof window === "object" && window) {
+        const event = new CustomEvent(action, { detail: data });
+        window.dispatchEvent(event);
+        return event;
     }
-    const event = new CustomEvent(action, { detail: data });
-    window.dispatchEvent(event);
+    console.log('no window context found');
 }
 
 //----------------------------------------------------------------
@@ -277,6 +333,11 @@ export async function loadFromExtStorage(propName) {
     });
 }
 
+
+/**
+ * Loads data from the extension storage.
+ * @returns {Promise<Object>} A promise that resolves with an object containing the stored data.
+ */
 export async function loadExtStorage() {
     return browser.storage.sync.get();
 }
@@ -339,7 +400,7 @@ export function addExtensionStorageValueListener(propName, callbackFn = (newValu
 //----------------------------------------------------------------
 
 /**
- * Sets the badge text for the browser action on the current tab in the browser toolbar (top right) from runtime (background service)
+ * (BG only) Sets the badge text for the browser action on the current tab in the browser toolbar (top right) from runtime (background service)
  * @param {string} text - The text to set as the badge.
  * @param {RegExp|null} [matches=null] - An optional Regex pattern to match URL against.
  */
@@ -353,9 +414,9 @@ export async function setBadgeText(text, matches = null) {
 }
 
 /**
- * Sets the badge color of the extension icon in the browser toolbar (top right) from runtime (background service)
- * @param {string} colorMapping - mapping of color names to hex values 
- * @returns {RegExp|null} - Regex pattern to match URL against. 
+ * (BG only) Sets the badge color of the extension icon in the browser toolbar (top right) from runtime (background service)
+ * @param {string} color - color in hex values (#ffffff) 
+ * @param {RegExp|null} [matches=null] - Regex pattern to match URL against. 
  */
 export const setBadgeColor = async (color, matches = null) => {
     console.log('setting badge color', color, matches)
@@ -368,10 +429,10 @@ export const setBadgeColor = async (color, matches = null) => {
 }
 
 /**
- * Sets the badge status (text & volor) of the extension icon in the browser toolbar (top right) from runtime (background service)
+ * (BG only) Sets the badge status (text & volor) of the extension icon in the browser toolbar (top right) from runtime (background service)
  * @param {string} status.text - status text
  * @param {string} status.color - hex color code
- * @returns {Function} - A function that takes a status object and optional matches array, and sets the badge color and text accordingly.
+ * @param {RegExp|null} [matches=null] - Regex pattern to match URL against. 
  */
 export const setBadgeStatus = ({ text, color }, matches = null) => {
     console.log('setting badge status', text, color, matches)
@@ -386,41 +447,77 @@ export const setBadgeStatus = ({ text, color }, matches = null) => {
 const CALL_FUNCTION = 'ext:callFunction';
 const GET_EXPOSED_FUNCTIONS = 'ext:getExposedFunctions';
 
-export const setupExposedBackGroundFunctions = (functionsObj = { ...bgFunctions }) => {
-    browser.runtime.onMessage.addEventListener(async (msg, sender, sendRes) => {
-        if (msg.action === CALL_FUNCTION && msg.functionName && functionsObj[functionName]) {
+export const isFunction = x => typeof x === "function";
+export const isObject = x => typeof x === "object";
+export const isPromise = x => isObject(x) && isFunction(x.then);
 
-            console.log('found function in background', func);
-            try {
-                const result = await functionsObj[functionName](...args, { msg, sender });
-                sendRes({
-                    result
-                });
-            } catch (error) {
-                console.log('error calling bg function', error);
-                sendRes({
-                    error
-                });
-            }
+export function invokeBackgroundFunction(msg, sender, sendRes, bgFuncs) {
+    let ret = bgFuncs[msg.functionName];
+    if (isFunction(ret)) {
+        try {
+            ret = ret(msg.args, {
+                request: req,
+                sender
+            });
+        } catch (error) {
+            sendRes({ error: error.message });
+            return false;
+        }
+        // If it is a promise (async function) keep the message channel open by returning true and send the reponse after resolving.
+        if (isPromise(ret)) {
+            ret
+                .then(result => sendRes({ result }))
+                .catch(error => sendRes({ error: error.message }));
+            // Keep the msg channel open for the async response
+            return true;
+        }
+    }
+    sendRes({ result: ret });
+    return false;
+}
+
+
+/**
+ * (BG only) registers functions to be exposed to the content script
+ * @param {Object} functionsObj - object containing functions to be exposed to the content script
+ */
+export const setupExposedBackGroundFunctions = (functionsObj = {}) => {
+    browser.runtime.onMessage.addListener((msg, sender, sendRes) => {
+        if (msg.action === CALL_FUNCTION && msg.functionName && functionsObj[msg.functionName]) {
+            return invokeBackgroundFunction(msg, sender, sendRes, functionsObj);
         }
         else if (msg.action === GET_EXPOSED_FUNCTIONS) {
             sendRes({
                 exposedFunctions: Object.keys(functionsObj)
             });
+            return false
         }
+        return false;
     });
 }
 
-export const callBackgroundFunction = (functionName, args, callbackFn) => {
+/**
+ * (CS only) Calls a funcion in the background service from the content script
+ * @param {*} functionName name of function to be called
+ * @param {*} args function arguments
+ * @param {*} options options to be passed to the sendMessage function
+ * @returns {Promise<any>} result of the function call
+ */
+export const callBackgroundFunction = (functionName, args, options) => {
     browser.runtime.sendMessage({
         action: CALL_FUNCTION,
         functionName: functionName,
         args: args
-    }, callbackFn);
+    }, options).then(res => console.log('received result', res), err => console.log('received error', err));
 }
 
-function getExposedBackgroundFunctions(callbackFn) {
-    chrome.runtime.sendMessage({ action: GET_EXPOSED_FUNCTIONS }, (response) => {
+/**
+ * (CS only) gets the exposed functions from the background service
+ * @param {*} callbackFn 
+ * @returns {Promise<Object>} object containing exposed functions
+ */
+export async function getExposedBackgroundFunctions(callbackFn) {
+    return await browser.runtime.sendMessage({ action: GET_EXPOSED_FUNCTIONS }, (response) => {
         const exposedFunctions = response.exposedFunctions || {};
         const bgFns = {};
 
@@ -435,5 +532,6 @@ function getExposedBackgroundFunctions(callbackFn) {
         });
 
         callbackFn(bgFns);
+        return bgFns;
     });
 }
