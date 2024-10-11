@@ -73,7 +73,9 @@ align-items: center;
 center; cursor: pointer;`,
     copyToClipboard: true,
     insertIntoInput: true,
+    insertIntoInputIds: '#prompt-textarea',
     showButton: false,
+    showButtonSelectedUrls: true,
     defaultInputQuerySelector: [
         'input[type="text"]',
         'input[type="search"]',
@@ -82,26 +84,7 @@ center; cursor: pointer;`,
         'input',
         '[role="textbox"]'
     ],
-    injectRecordButton: [
-        {
-            url: 'chat.openai.com/',
-            selector: '#prompt-textarea',
-            css: `position: absolute; 
-right: 50px; 
-z-index: 9999; 
-width: 32px; 
-height: 32px; 
-line-height: 1; 
-text-align: center; 
-cursor: pointer;
-padding: 0.5rem;
-bottom: 0.75rem;
-transition-duration: .15s;
-transition-property: color,background-color,border-color,text-decoration-color,fill,stroke;
-transition-timing-function: cubic-bezier(.4,0,.2,1);
-border-radius: 0.375rem; `,
-        }
-    ],
+    showRecordButtonUrls: 'chat.openai.com,chatgpt.com',
     status: STATUS,
 }
 

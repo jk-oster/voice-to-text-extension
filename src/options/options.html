@@ -6,6 +6,7 @@
     <link rel="icon" type="image/svg+xml" href="../assets/icon.svg" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./main.css" />
     <title>Voice to text</title>
 </head>
 
@@ -152,7 +153,7 @@
                 If you have Whisper locally installed or want to use another transcription service you can change the
                 API endpoint and API key.
                 The only data that is stored permanently in the browser are the settings you find below.
-                Feel free to check out the code base on <a href="">GitHub</a>
+                Feel free to check out the code base on <a class="underline" href="">GitHub</a>
             </p>
 
             <h3 id="permissions" class="my-2 text-xl font-semibold text-gray-900 dark:text-white">
@@ -195,7 +196,7 @@
                             placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                             required />
-                        <p>See <a href="">here</a> how to obtain your OpenAI API key.</p>
+                        <p>See <a class="underline" href="">here</a> how to obtain your OpenAI API key.</p>
                     </div>
 
                     <div class="mb-6">
@@ -246,6 +247,17 @@
 
                     </div>
 
+                                        <div class="mb-6">
+                        <label for="copyToClipboard" class="inline-flex relative items-center mr-5 cursor-pointer">
+                            <input type="checkbox" id="copyToClipboard" name="copyToClipboard" class="sr-only peer" />
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-blue-500 dark:peer-focus:ring-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500">
+                            </div>
+                            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Copy transcription to clipboard
+                            </span>
+                        </label>
+                    </div>
 
                     <!-- Checkbox input with custom styling -->
 
@@ -262,15 +274,13 @@
                     </div>
 
                     <div class="mb-6">
-                        <label for="copyToClipboard" class="inline-flex relative items-center mr-5 cursor-pointer">
-                            <input type="checkbox" id="copyToClipboard" name="copyToClipboard" class="sr-only peer" />
-                            <div
-                                class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-blue-500 dark:peer-focus:ring-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500">
-                            </div>
-                            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                Copy transcription to clipboard
-                            </span>
+                        <label for="injectRecordButtonUrls"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            IDs of elements to insert transcript automatically into (comma separated list)
                         </label>
+                        <input type="text" id="injectRecordButtonUrls" name="insertIntoInputIds"
+                            value="" placeholder="#prompt-textarea"
+                            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" />
                     </div>
 
                 </fieldset>
@@ -282,6 +292,16 @@
                         </legend>
                     </h2>
 
+                                        <div class="mb-6">
+                        <label for="injectRecordButtonUrls"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            Show "button" when URL matches (comma separated list)
+                        </label>
+                        <input type="text" id="injectRecordButtonUrls" name="injectRecordButtonUrls"
+                            value="" placeholder="chatgpt.com,chat.openai.com,google.com,jakobosterberger.com"
+                            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" />
+                    </div>
+
                     <div class="mb-6">
                         <label for="showButton" class="inline-flex relative items-center mr-5 cursor-pointer">
                             <input type="checkbox" id="showButton" name="showButton" class="sr-only peer" />
@@ -292,7 +312,7 @@
                                 Show "record" button on every page
                             </span>
                         </label>
-                    </div>
+                    </div>  
 
                     <div class="mb-6">
                         <label for="advancedDisplaySettings"
@@ -312,46 +332,12 @@
 
                         <div class="mb-6">
                             <label for="btnCss" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                Default page button CSS
+                                Page button CSS
                             </label>
                             <textarea multiline aria-multiline="true" id="btnCss" name="btnCss" value=""
                                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light">
                             </textarea>
-                        </div>
-
-
-                        <div class="grid grid-cols-3 gap-2" id="injectRecordButton">
-                            <div class="mb-6 flex flex-col justify-end">
-                                <label for="injectRecordButton.0.url"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                    Inject Button when URL matches (regex)
-                                </label>
-                                <input type="text" id="injectRecordButton.0.url" name="injectRecordButton.0.url"
-                                    value=""
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" />
-                            </div>
-
-                            <div class="mb-6 flex flex-col justify-end">
-                                <label for="injectRecordButton.0.selector"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                    CSS Selector for button injection (inserts button after the element)
-                                </label>
-                                <input type="text" id="injectRecordButton.0.selector"
-                                    name="injectRecordButton.0.selector" value=""
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" />
-                            </div>
-
-                            <div class="mb-6 flex flex-col justify-end">
-                                <label for="injectRecordButton.0.css"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                    CSS for selector injected button
-                                </label>
-                                <textarea multiline aria-multiline="true" id="injectRecordButton.0.css"
-                                    name="injectRecordButton.0.css" value=""
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light">
-                                </textarea>
-                            </div>
-                        </div>
+                        </div>          
 
                         <!--button>+ Add Button Injection Rule</button-->
                     </div>
@@ -366,9 +352,9 @@
                     Contact
                 </h2>
                 <p class="text-gray-700 dark:text-gray-300">
-                    Hey I am <a href="https://jkoster.com">Jakob Osterberger</a> the
+                    Hey I am <a class="underline" href="https://jkoster.com">Jakob Osterberger</a> the
                     creator of this extension. If you need any support you can contact
-                    me <a href="https://jkoster.com/contact">though my website</a>.
+                    me <a class="underline" href="https://jkoster.com/contact">though my website</a>.
                     Contribution, pull requests and suggestions for improvements are
                     very welcome.
                 </p>
@@ -382,7 +368,7 @@
                 </p>
                 <p class="text-gray-700 dark:text-gray-300">
                     Furthermore, kodos to the creator of the
-                    <a href="https://github.com/StarkShang/vite-plugin-chrome-extension">Vite Chrome Extension
+                    <a class="underline" href="https://github.com/StarkShang/vite-plugin-chrome-extension">Vite Chrome Extension
                         Plugin</a>
                     for enabeling fast and easy development with vite!
                 </p>

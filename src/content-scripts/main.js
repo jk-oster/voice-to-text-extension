@@ -42,19 +42,10 @@ addEventListener(ACTIONS.stoppedRecording, () => {
     recordButton.ariaPressed = false;
 });
 
-addEventListener(ACTIONS.audioReady, (blob) => {
+addEventListener(ACTIONS.audioReady, async (blob) => {
     console.log(ACTIONS.audioReady, blob.detail)
-    const formData = new FormData();
-
-    formData.append('file', blob.detail, 'audio.wav');
-    config.formFields.forEach(entry => {
-        const { key, value } = entry;
-        formData.append(key, value);
-    });
-
-    console.log('sending audio data to whisper api', formData);
-
-    sendToWhisperAPI(formData);
+    console.log('sending audio data to whisper api');
+    sendToWhisperAPI(blob);
 });
 
 addEventListener(ACTIONS.fetching, (fetching) => {
@@ -73,54 +64,34 @@ addExtensionMessageActionListener(ACTIONS.toggleRecording, () => {
 
 async function createUI() {
     const showButton = await loadFromExtStorage('showButton');
+    const injectRecordButtonUrls = await loadFromExtStorage('injectRecordButtonUrls');
     let btnCss = await loadFromExtStorage('btnCss');
 
     setStatus(STATUS.stop)
 
-    const elem = config.injectRecordButton.find(e => window.location.href.includes(e.url));
-    promptTextarea = document.querySelector(elem?.selector ?? 'lolidontmatchanythinghopefully');
+    const matchedUrl = injectRecordButtonUrls?.split(',').some(url => window.location.href.includes(url));
+    console.log(matchedUrl, showButton, injectRecordButtonUrls, btnCss)
 
-    if (promptTextarea) {
-        btnCss = elem?.css ?? btnCss;
-        promptTextarea.insertAdjacentElement('afterend', recordButton);
-    } else if (showButton) {
+    if (showButton || matchedUrl) {
         document.body.appendChild(recordButton);
-    }
 
-    // Insert the style tag into the document
-    style.innerHTML = '#' + config.extBtnId + '{' + btnCss + '} #' + config.extBtnId + ' > img { width: 16; height = 16;}';
-    document.head.appendChild(style);
+        // Insert the style tag into the document
+        style.innerHTML = '#' + config.extBtnId + '{' + btnCss + '} #' + config.extBtnId + ' > img { width: 16; height = 16;}';
+        document.head.appendChild(style);
+    }
 }
 
-async function insertTextIntoInput(text) {
-    // Focus last focused tab
-    // await focusLastFocusedTab();
-
-    const focusedElement = document.activeElement;
-    if (focusedElement) {
-        if (focusedElement.tagName === 'INPUT' || focusedElement.tagName === 'TEXTAREA') {
-            focusedElement.value += ' ' + text;
-        }
-        if (focusedElement.isContentEditable) {
-            focusedElement.textContent += ' ' + text;
-        }
-    }
-    if (promptTextarea) {
-        promptTextarea.value += ' ' + text;
-    }
-
-    // Copy the text to the clipboard
-    copyTextToClipboard(text);
-
-    // Reset recordinf chunks to not send / append same recorded
-    dispatchWindowMessage(ACTIONS.resetRecording);
-}
-
-// Send the audio data to the Whisper API
-async function sendToWhisperAPI(formData) {
-    // Make an HTTP request to the transcription API
+async function sendToWhisperAPI(blob) {
     const apiKey = await loadFromExtStorage('apiKey');
     const apiUrl = await loadFromExtStorage('apiUrl');
+
+    const formFields = await loadFromExtStorage('formFields');
+    const formData = new FormData();
+    formData.append('file', blob.detail, 'audio.wav');
+    formFields.forEach(entry => {
+        const { key, value } = entry;
+        formData.append(key, value);
+    });
 
     dispatchWindowMessage(ACTIONS.fetching, true)
 
@@ -136,14 +107,9 @@ async function sendToWhisperAPI(formData) {
 
     fetch(apiUrl, options)
         .then(response => response.json())
-        .then(data => {
+        .then(async(data) => {
             dispatchWindowMessage(ACTIONS.fetching, false)
 
-            // Handle the response from the Whisper API
-            console.log('Whisper API response:', data);
-
-            // Now you can handle the text data received from the Whisper API
-            // For example, you can copy it to the clipboard or insert it into an input field
             if (data.text) {
                 insertTextIntoInput(data.text);
             }
@@ -152,6 +118,41 @@ async function sendToWhisperAPI(formData) {
             dispatchWindowMessage(ACTIONS.fetching, false)
             console.warn('Error sending audio data to Whisper API:', error);
         });
+}
+
+
+async function insertTextIntoInput(text) {
+    // Focus last focused tab
+    // await focusLastFocusedTab();
+    let insertIntoInput = await loadFromExtStorage('insertIntoInput');
+    let insertIntoInputIds = await loadFromExtStorage('insertIntoInputIds') ?? '#ihopefillydontexistlol';
+
+    const insert = (element, text) => {
+        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+            const hasText = element.value.trim() !== '';
+            element.value += (hasText ? ' ' : '') + text;
+        }
+        if (element.isContentEditable) {
+            const hasText = element.textContent.trim() !== '';
+            element.textContent += (hasText ? ' ' : '') + text;
+        }
+    }
+    
+    console.log('insertIntoInput', insertIntoInput)
+    const focusedElement = document.activeElement;
+    if (focusedElement && insertIntoInput) {
+        insert(focusedElement, text);
+    }
+
+    const inputsByIds = document.querySelectorAll(insertIntoInputIds);
+    for (const input of inputsByIds) {
+        insert(input, text);
+    }
+
+    copyTextToClipboard(text);
+
+    // Reset recording chunks to not send / append same recorded
+    dispatchWindowMessage(ACTIONS.resetRecording);
 }
 
 function copyTextToClipboard(text) {
@@ -169,8 +170,6 @@ function copyTextToClipboard(text) {
         .catch(error => {
             console.error('Error copying text to clipboard:', error);
         });
-
-
 }
 
 function fallbackCopyTextToClipboard(text) {
