@@ -1,3 +1,5 @@
+![release badge](https://github.com/jk-oster/voice-to-text-extension/actions/workflows/release.yaml/badge.svg)
+
 # Voice to Text Extension
 ## Overview
 The Voice to Text extension provides an open transcription integration for ChatGPT and other webpages, allowing you to use your voice as prompt input. While initially designed for ChatGPT, this extension can be utilized on any website.
