@@ -17,7 +17,7 @@ The Voice to Text extension provides an open transcription integration for any w
 3. Finish/stop ⏹️ the recording by clicking the button again.
 4. Once the transcription 🔤 is finished, the resulting text will be inserted into the active input field and copied to your clipboard by default.
 
-Use the keyboard ⌨️ shortcut Ctrl + Shift + K to start ▶️ and stop ⏹️ the recording.
+Use the keyboard ⌨️ shortcut ``Ctrl + Shift + K`` to start ▶️ and stop ⏹️ the recording.
 
 ## 🛡️ Privacy
 This extension utilizes Whisper from OpenAI for transcribing recordings, offering fast transcriptions in a variety of languages. You can customize the API endpoint and key if you have Whisper locally installed or prefer another transcription service. The only data stored permanently in the browser are the extension settings.
