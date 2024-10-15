@@ -35,7 +35,7 @@ export const ACTIONS = {
     toggleRecording: 'toggleRecording',
     startedRecording: 'startedRecording',
     stoppedRecording: 'stoppedRecording',
-    audioReady: 'audioBlobAvailable',
+    audioBlobAvailable: 'audioBlobAvailable',
     badge: 'badge',
     copyToClipboard: 'copyToClipboard',
     insertIntoInput: 'insertIntoInput',
@@ -43,9 +43,12 @@ export const ACTIONS = {
     apiKeyAdded: 'apiKeyAdded',
     resetRecording: 'resetRecording',
     fetching: 'fetching',
+    transcriptReady: 'transcriptReady',
 }
 
 export const config = {
+    allowRecoring: false,
+    allowClipboard: false,
     customEndpoint: false,
     advancedDisplaySettings: false,
     extBtnId: 'ext-voice-to-text',
@@ -57,11 +60,7 @@ export const config = {
             value: 'whisper-1'
         },
     ],
-    btnCss: `position: fixed; 
-bottom: 5px; 
-right: 5px; 
-z-index: 9999; 
-background-color: ${COLORS.violet}; 
+    btnCss: `background-color: ${COLORS.violet}; 
 transition-duration: .15s;
 transition-property: color,background-color,border-color,text-decoration-color,fill,stroke;
 border-radius: 50%; 
@@ -74,7 +73,7 @@ center; cursor: pointer;`,
     copyToClipboard: true,
     insertIntoInput: true,
     insertIntoInputIds: '#prompt-textarea',
-    showButton: false,
+    showButton: true,
     showButtonSelectedUrls: true,
     defaultInputQuerySelector: [
         'input[type="text"]',
@@ -84,7 +83,7 @@ center; cursor: pointer;`,
         'input',
         '[role="textbox"]'
     ],
-    showRecordButtonUrls: 'chat.openai.com,chatgpt.com',
+    injectRecordButtonUrls: 'chat.openai.com,chatgpt.com',
     status: STATUS,
 }
 

@@ -6,7 +6,7 @@
     <link rel="icon" type="image/svg+xml" href="../assets/icon.svg" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./main.css" />
+    <link rel="stylesheet" href="./options.css" />
     <title>Voice to text</title>
 </head>
 
@@ -31,6 +31,11 @@
                         <li>
                             <a href="#about"
                                 class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">About</a>
+                        </li>
+                        <li>
+                            <a href="#permissions"
+                                class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Permission
+                                Settings</a>
                         </li>
                         <li>
                             <a href="#core-settings"
@@ -141,34 +146,48 @@
             </ol>
             <p class="mb-6 mt-2 text-gray-700 dark:text-gray-300">
                 You can also use the keyboard ⌨️ shortcut <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd> to start ▶️
-                and stop ⏹️ the recording.
+                and stop ⏹️ the recording. You can change the keybindings in your browser settings (for chrome users, put "<code>chrome://extensions/shortcuts</code>" into your address bar).
             </p>
 
             <h3 id="privacy" class="my-2 text-xl font-semibold text-gray-900 dark:text-white">
                 Privacy
             </h3>
             <p class="mb-6 text-gray-700 dark:text-gray-300">
-                This extension uses Whisper from OpenAI to transcribe your recordings.
                 Whisper provides fast transcriptions of a wide range of languages.
+                The extension only sends data to OpenAI for transcription services if you provide an OpenAI API key. 
+                No data is sent to OpenAI or any other third party without you providing an API key for the service.
+                
+                This extension uses Whisper from OpenAI to transcribe your recordings by default.
                 If you have Whisper locally installed or want to use another transcription service you can change the
                 API endpoint and API key.
                 The only data that is stored permanently in the browser are the settings you find below.
                 Feel free to check out the code base on <a class="underline" href="">GitHub</a>
             </p>
 
-            <h3 id="permissions" class="my-2 text-xl font-semibold text-gray-900 dark:text-white">
+            <h2 id="permissions" class="my-2 text-4xl font-bold text-gray-900 dark:text-white">
                 Extension permissions
-            </h3>
+            </h2>
+            <div class="mb-6">
+                <label for="allowRecording" class="inline-flex relative items-center mr-5 cursor-pointer">
+                    <input type="checkbox" id="allowRecording" name="allowRecording" class="sr-only peer" required />
+                    <div
+                        class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-blue-500 dark:peer-focus:ring-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500">
+                    </div>
+                    <span class="ml-3 text-md font-medium text-gray-900 dark:text-gray-300">
+                        Allow microphone recording
+                    </span>
+                </label>
+            </div>
+
             <ul class="mb-6 list-inside list-disc text-gray-700 dark:text-gray-300">
+
                 <li>
-                    <strong>use microphone</strong>: Required to record your voice.
+                    <strong>microphone</strong>: Required to record your voice. Only gives permission for recording audio to the extension - 
+                    not to the page it is used on.
                 </li>
                 <li>
                     <strong>tabs</strong>: Required to inject the recording button into the ChatGPT
                     interface (and other pages) and paste transcriptions.
-                </li>
-                <li>
-                    <strong>clipboardWrite</strong>: Required to copy the transcription to your clipboard.
                 </li>
                 <li>
                     <strong>storage</strong>: Required to store the settings you find below.
@@ -192,7 +211,7 @@
                         <label for="apiKey" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                             Transcription API key (Bearer token)
                         </label>
-                        <input type="text" id="apiKey" name="apiKey" value=""
+                        <input type="password" id="apiKey" name="apiKey" value=""
                             placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                             required />
@@ -247,7 +266,7 @@
 
                     </div>
 
-                                        <div class="mb-6">
+                    <div class="mb-6">
                         <label for="copyToClipboard" class="inline-flex relative items-center mr-5 cursor-pointer">
                             <input type="checkbox" id="copyToClipboard" name="copyToClipboard" class="sr-only peer" />
                             <div

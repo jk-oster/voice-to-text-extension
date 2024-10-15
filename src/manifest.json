@@ -1,24 +1,16 @@
 {
-  "name": "Voice to Text",
-  "version": "0.1.0",
-  "manifest_version": 3,
-  "content_scripts": [
-    {
-      "matches": ["https://*/*", "http://*/*"],
-      "js": ["content-scripts/main.js"]
-    }
-  ],
-  "background": {
-    "service_worker": "background.js"
-  },
+  "{{chrome}}.manifest_version": 3,
+  "{{firefox}}.manifest_version": 2,
+
   "icons": {
     "16": "assets/icon16.png",
-    "32": "assets/icon32.png",
-    "48": "assets/icon48.png",
-    "128": "assets/icon128.png",
-    "512": "assets/icon512.png"
+      "32": "assets/icon32.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png",
+      "512": "assets/icon512.png"
   },
-  "action": {
+
+  "{{chrome}}.action": {
     "default_icon": {
       "16": "assets/icon16.png",
       "32": "assets/icon32.png",
@@ -28,8 +20,36 @@
     },
     "default_title": "Record Voice (Ctrl+Shift+K)"
   },
-  "permissions": ["tabs", "storage", "commands"],
-  "optional_permissions": ["clipboardWrite"],
+  "{{firefox}}.browser_action": {
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "32": "assets/icon32.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png",
+      "512": "assets/icon512.png"
+    },
+    "default_popup": "popup/popup.html",
+    "default_title": "Record Voice (Ctrl+Shift+K)"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://*/*", "http://*/*"],
+      "js": ["src/content-scripts/content.js"]
+    }
+  ],
+
+  "background": {
+    "{{chrome}}.service_worker": "src/background.js",
+    "{{firefox}}.scripts": ["src/background.js"]
+  },
+  "options_page": "src/options/options.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["/assets/*", "/src/recorder/*"],
+      "matches": ["https://*/*", "http://*/*"]
+    }
+  ],
   "commands": {
     "toggleRecording": {
       "suggested_key": {
@@ -38,14 +58,6 @@
       "description": "Toggle Audio Recording"
     }
   },
-  "options_ui": {
-    "page": "options/options.html",
-    "open_in_tab": true
-  },
-  "web_accessible_resources": [
-    {
-      "resources": ["assets/*"],
-      "matches": ["https://*/*", "http://*/*"]
-    }
-  ]
+  "permissions": ["tabs", "storage", "commands"]
 }
+

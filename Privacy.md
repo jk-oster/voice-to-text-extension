@@ -19,6 +19,7 @@ The collected user data is exclusively used for the following purposes:
 User data processed by the Voice to Text Extension may be shared with the following parties:
 
 - **OpenAI:** As the extension relies on OpenAI's Whisper for transcription services, user data may be shared with OpenAI in accordance with [their privacy policies](https://openai.com/enterprise-privacy).
+- **Other:** If the user decides to configure a custom transcription Endpoint which is compatible with the OpenAI transcription API then the data will be sent there and shared with whoever is running that endpoint.
 
 ## Access to Privacy Policy:
 
@@ -26,6 +27,6 @@ The complete and up-to-date privacy policy can be accessed through the designate
 
 It is the user's responsibility to review the privacy policy before using the extension. Any updates or changes to the privacy policy will be reflected in the designated area, and users are encouraged to check periodically for updates.
 
-If you have any concerns or questions regarding the privacy policy, please contact us at [jakobosterberger.com/contact](https://jakobosterberger.com/contact).
+If you have any concerns or questions regarding the privacy policy, please contact me at [jakobosterberger.com/contact](https://jakobosterberger.com/contact).
 
-*Last updated: 11.10.2023*
+*Last updated: 11.10.2024*

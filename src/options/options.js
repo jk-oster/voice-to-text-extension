@@ -1,10 +1,19 @@
-import { saveObjectToExtStorage, loadExtStorage } from "../service";
-import main from "./main.css"; // eslint-disable-line no-unused-vars // returns css as string
+import { saveObjectToExtStorage, loadExtStorage } from "../service.js";
+import { requestClipboardAccess, requestMediaAccess } from "../permissions.js";
 
 let config;
 const inputs = document.querySelectorAll('input');
 const textareas = document.querySelectorAll('textarea');
-injectCss(main);
+
+function inIframe() {
+    try {
+        return window.self !== window.top ||
+            window.window !== window.parent ||
+            window.frameElement;
+    } catch (e) {
+        return true;
+    }
+}
 
 function get(path = '', nestedObject = {}) {
     let data = nestedObject;
@@ -33,13 +42,6 @@ function set(path = '', nestedObj = {}, value) {
     schema[segments[len - 1]] = value;
 }
 
-function injectCss(cssString) {
-    let head = document.getElementsByTagName('HEAD')[0];
-    let style = document.createElement('style');
-    style.innerHTML = cssString;
-    head.appendChild(style);
-}
-
 function save() {
     for (const elem of inputs) {
 
@@ -47,12 +49,12 @@ function save() {
             set(elem.name, config, !!elem.checked);
         }
 
-        if (elem.type === 'text' || elem.tagName === 'TEXTAREA') {
+        if (elem.type === 'text' || elem.type === 'password' || elem.tagName === 'TEXTAREA') {
             set(elem.name, config, elem.value);
         }
     }
 
-    console.log('save', config)
+    // console.log('save', config)
     saveObjectToExtStorage(config);
 }
 
@@ -60,6 +62,28 @@ function save() {
 window.addEventListener('DOMContentLoaded', async () => {
     config = await loadExtStorage();
 
+    const isIframe = inIframe();
+    if(isIframe) {
+        setTimeout(() => {
+            requestMediaAccess();
+            requestClipboardAccess();
+        }, 5000);
+    }
+
+    const allowRecoringElem = document.getElementById('allowRecording');
+    if (allowRecoringElem) {
+        allowRecoringElem.addEventListener('change', async() => {
+            requestMediaAccess();
+        });
+    }
+
+    const allowClipboardElem = document.getElementById('allowClipboard');
+    if (allowClipboardElem) {
+        allowClipboardElem.addEventListener('change', async() => {
+            requestClipboardAccess();
+        });
+    }
+        	
     // on customEndpoint click toggle the hidden class
     const customEndpoint = document.getElementById('customEndpoint');
     customEndpoint.addEventListener('click', toggleHidden('#custom-endpoint-options'));
@@ -76,7 +100,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             elem.addEventListener('click', save);
         }
 
-        if (elem.type === 'text' || elem.tagName === 'TEXTAREA') {
+        if (elem.type === 'text' || elem.type === 'password' || elem.tagName === 'TEXTAREA') {
             elem.value = value;
             elem.addEventListener('input', save);
         }
@@ -92,6 +116,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 const toggleHidden = (selector) => () => {
     const elem = document.querySelector(selector);
-    console.log('elem', elem)
+    // console.log('elem', elem)
     elem?.classList.toggle('hidden');
 }

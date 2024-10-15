@@ -1,3 +1,5 @@
+import { ACTIONS } from "./config.js";
+
 /**
  * Wrapper for the mediaRecorder API
  * Records audio and creates a blob from it
@@ -14,7 +16,7 @@ class AudioRecorder {
         this.mediaRecorder = null;
         this.recordedChunks = [];
 
-        addEventListener('resetRecording', () => {
+        addEventListener(ACTIONS.resetRecording, () => {
             this.recordedChunks = [];
         });
     }
@@ -32,13 +34,13 @@ class AudioRecorder {
 
             this.mediaRecorder.onstop = () => {
                 const audioBlob = new Blob(this.recordedChunks, { type: 'audio/wav' });
-                const event = new CustomEvent('audioBlobAvailable', { detail: audioBlob });
+                const event = new CustomEvent(ACTIONS.audioBlobAvailable, { detail: audioBlob });
                 window.dispatchEvent(event);
             };
 
             this.mediaRecorder.start();
             // throw an event 'startedRecording'
-            const event = new CustomEvent('startedRecording');
+            const event = new CustomEvent(ACTIONS.startedRecording);
             window.dispatchEvent(event);
         } catch (error) {
             console.error('Error starting recording:', error);
@@ -50,7 +52,7 @@ class AudioRecorder {
             this.mediaRecorder.stop();
         }
         // throw new event 'stoppedRecording'
-        const event = new CustomEvent('stoppedRecording');
+        const event = new CustomEvent(ACTIONS.stoppedRecording);
         window.dispatchEvent(event);
     }
 
@@ -65,7 +67,6 @@ class AudioRecorder {
             this.startRecording();
         }
     }
-
 }
 
 /**

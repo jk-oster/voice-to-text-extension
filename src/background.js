@@ -10,8 +10,8 @@ import {
     loadFromExtStorage,
     addExtensionStorageValueListener,
     openOptionsPage,
-} from "./service";
-import config, { ACTIONS } from "./config";
+} from "./service.js";
+import config, { ACTIONS } from "./config.js";
 
 browser.runtime.onInstalled.addListener(async () => {
     console.log("Background Service Installed");
@@ -49,10 +49,15 @@ addExtensionMessageActionListener(ACTIONS.badge, ({ color, text }) => {
 });
 
 addExtensionStorageValueListener('apiKey', (apiKey) => {
-    console.log('apiKey changed', apiKey);
+    // console.log('apiKey changed', apiKey);
 });
 
 // Log all messages from the extension runtime
-browser.runtime.onMessage.addListener((message) => {
-    console.log('logging received message from background service', message);
-});
+// browser.runtime.onMessage.addListener((message) => {
+//     console.log('logging received message from background service', message);
+// });
+
+
+// setInterval(()=> {
+//     sendToCurrentTab({action:'test'});
+// }, 5000);

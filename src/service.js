@@ -136,7 +136,6 @@ export async function openOptionsPage(path = 'options/options.html') {
     }
 }
 
-
 /**
  * (BG only) Executes scripts on a specified tab.
  * @param {number} tabId - The ID of the tab to execute the script on.
@@ -197,7 +196,7 @@ export async function sendToTab(tabId, message = { action: '', data: null }) {
  */
 export async function sendToRuntime({ action = '', data = null }, options = {}) {
     try {
-        console.log('sending to runtime: ', action, data);
+        // console.log('sending to runtime: ', action, data);
         return await browser.runtime.sendMessage({ action, data }, options);
     } catch (e) {
         console.log(e)
@@ -216,7 +215,7 @@ export async function sendToRuntime({ action = '', data = null }, options = {}) 
 export async function sendToAllTabsMatching({ query: tabsQuery = {}, urlMatch = null }, { action = '', data = null }) {
     try {
         await browser.tabs.query(tabsQuery).then(async (tabs) => {
-            console.log('sending to all tabs', tabs);
+            // console.log('sending to all tabs', tabs);
             for (const tab of tabs) {
                 if (urlMatch && !urlMatch.test(tab.url)) continue;
                 console.log('sending to tab', tab);
@@ -231,16 +230,19 @@ export async function sendToAllTabsMatching({ query: tabsQuery = {}, urlMatch = 
 /**
  * Adds a listener for extension messages with a specified action.
  * @param {string} action - The action to listen for.
- * @param {function} callbackFn - The function to call when a message with the specified action is received.
+ * @param {function} responseFn - The function to handle the response message from the extension.
  * @returns {Promise<void>}
  */
-export async function addExtensionMessageActionListener(action = 'update', callbackFn = (message, sender, sendRes) => {
+export async function addExtensionMessageActionListener(action = 'update', responseFn = (message, sender) => {
+    return;
 }) {
     try {
-        browser.runtime.onMessage.addListener(async (message, sender, sendRes) => {
+        browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
             if ('action' in message && message['action'] === action) {
-                console.log('received runtime message', message, sender);
-                callbackFn(message?.data ?? message, sender, sendRes);
+                // console.log('received runtime message', message, sender);
+
+                if(responseFn === null) return;
+                sendResponse(responseFn(message?.data ?? message, sender));
             }
         });
     } catch (e) {
@@ -257,7 +259,7 @@ export function addExtensionIconClickListener(callbackFn = async (tab, info) => 
 }) {
     try {
         browser.action.onClicked.addListener(async (tab, info) => {
-            console.log('received icon click', tab, info);
+            // console.log('received icon click', tab, info);
             callbackFn(tab, info);
         });
     }
@@ -276,7 +278,7 @@ export function addExtensionCommandListener(command = 'update', callbackFn = (co
 }) {
     try {
         browser.commands.onCommand.addListener(async (command, tab) => {
-            console.log('received command', command, tab);
+            // console.log('received command', command, tab);
             callbackFn(command, tab);
         });
     } catch (e) {
@@ -419,7 +421,7 @@ export async function setBadgeText(text, matches = null) {
  * @param {RegExp|null} [matches=null] - Regex pattern to match URL against. 
  */
 export const setBadgeColor = async (color, matches = null) => {
-    console.log('setting badge color', color, matches)
+    // console.log('setting badge color', color, matches)
     const tabId = await getCurrTabId(matches);
     if (!tabId) {
         console.log('no tab id found');
@@ -435,7 +437,7 @@ export const setBadgeColor = async (color, matches = null) => {
  * @param {RegExp|null} [matches=null] - Regex pattern to match URL against. 
  */
 export const setBadgeStatus = ({ text, color }, matches = null) => {
-    console.log('setting badge status', text, color, matches)
+    // console.log('setting badge status', text, color, matches)
     setBadgeColor(color, matches);
     setBadgeText(text, matches);
 }
