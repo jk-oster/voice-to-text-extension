@@ -27,7 +27,7 @@ window.addEventListener('focusin', (event) => {
     lastFocusedElement = event.target;
 });
 
-function injectRecorderIframe() {    
+async function injectRecorderIframe() {    
     const url = getExtResUrl('src/recorder/recorder.html');
     const iframe = document.createElement('iframe');
     iframe.allow = 'microphone';
@@ -43,6 +43,18 @@ function injectRecorderIframe() {
     iframe.style.border = '0';
     iframe.style.background = 'none transparent';
     iframe.src = url;
+
+    const showButton = await loadFromExtStorage('showButton');
+    const injectRecordButtonUrls = await loadFromExtStorage('injectRecordButtonUrls');
+
+    const matchedUrl = injectRecordButtonUrls?.split(',').some(url => window.location.href.includes(url));
+    const shouldShow = showButton || matchedUrl;
+
+    if (!shouldShow) {
+        iframe.hidden = 'true';
+        iframe.style.display = 'none';
+    }
+
     document.body.appendChild(iframe);
 
     // console.log('Voice Extension Recorder iFrame successfully injected');

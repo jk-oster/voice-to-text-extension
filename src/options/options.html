@@ -128,7 +128,7 @@
             <h3 id="usage" class="my-2 text-xl font-semibold text-gray-900 dark:text-white">
                 Usage
             </h3>
-            <ol class="list-decimal list-inside text-gray-700 dark:text-gray-300">
+            <ol class="mb-3 list-decimal list-inside text-gray-700 dark:text-gray-300">
                 <li>
                     At first set your (OpenAI) API key 🔑 in the settings.
                 </li>
@@ -152,14 +152,19 @@
             <h3 id="privacy" class="my-2 text-xl font-semibold text-gray-900 dark:text-white">
                 Privacy
             </h3>
-            <p class="mb-6 text-gray-700 dark:text-gray-300">
-                Whisper provides fast transcriptions of a wide range of languages.
+            <p class="mb-3 text-gray-700 dark:text-gray-300">
+                Whisper from OpenAI provides fast transcriptions of a wide range of languages.
                 The extension only sends data to OpenAI for transcription services if you provide an OpenAI API key. 
                 No data is sent to OpenAI or any other third party without you providing an API key for the service.
-                
-                This extension uses Whisper from OpenAI to transcribe your recordings by default.
-                If you have Whisper locally installed or want to use another transcription service you can change the
+            </p>
+
+            <p class="mb-3 text-gray-700 dark:text-gray-300">
+                By default this extension uses OpenAI's Whisper API to transcribe your recordings.
+                However, if you have Whisper locally installed or want to use another transcription service (compatible with OpenAI API) you can change the
                 API endpoint and API key.
+            </p>
+
+            <p class="mb-6 text-gray-700 dark:text-gray-300">
                 The only data that is stored permanently in the browser are the settings you find below.
                 Feel free to check out the code base on <a class="underline" href="">GitHub</a>
             </p>
@@ -167,20 +172,20 @@
             <h2 id="permissions" class="my-2 text-4xl font-bold text-gray-900 dark:text-white">
                 Extension permissions
             </h2>
-            <div class="mb-6">
+            <div class="my-3">
                 <label for="allowRecording" class="inline-flex relative items-center mr-5 cursor-pointer">
                     <input type="checkbox" id="allowRecording" name="allowRecording" class="sr-only peer" required />
                     <div
-                        class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-blue-500 dark:peer-focus:ring-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500">
+                        class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-green-500 dark:peer-focus:ring-green-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-500">
                     </div>
                     <span class="ml-3 text-md font-medium text-gray-900 dark:text-gray-300">
-                        Allow microphone recording
+                        Allow microphone (* required)
                     </span>
                 </label>
             </div>
 
             <ul class="mb-6 list-inside list-disc text-gray-700 dark:text-gray-300">
-
+                
                 <li>
                     <strong>microphone</strong>: Required to record your voice. Only gives permission for recording audio to the extension - 
                     not to the page it is used on.
@@ -209,7 +214,7 @@
                     <!-- Input for the Whisper API key (bearer token) -->
                     <div class="mb-6">
                         <label for="apiKey" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            Transcription API key (Bearer token)
+                            Transcription API key (* required)
                         </label>
                         <input type="password" id="apiKey" name="apiKey" value=""
                             placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
@@ -295,7 +300,7 @@
                     <div class="mb-6">
                         <label for="injectRecordButtonUrls"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            IDs of elements to insert transcript automatically into (comma separated list)
+                            CSS Selector of elements to insert transcript automatically into
                         </label>
                         <input type="text" id="injectRecordButtonUrls" name="insertIntoInputIds"
                             value="" placeholder="#prompt-textarea"
@@ -342,7 +347,7 @@
                                 class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-blue-500 dark:peer-focus:ring-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500">
                             </div>
                             <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                Advanced display settings (configure button styling and injection)
+                                Advanced display settings (configure button styling)
                             </span>
                         </label>
                     </div>

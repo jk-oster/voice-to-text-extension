@@ -1,5 +1,5 @@
-import { saveObjectToExtStorage, loadExtStorage } from "../service.js";
-import { requestClipboardAccess, requestMediaAccess } from "../permissions.js";
+import { saveObjectToExtStorage, loadExtStorage, loadFromExtStorage, saveToExtStorage } from "../service.js";
+import { checkMediaAccess, requestClipboardAccess, requestMediaAccess } from "../permissions.js";
 
 let config;
 const inputs = document.querySelectorAll('input');
@@ -61,28 +61,6 @@ function save() {
 // on load, get the value of the whisper-api-key from storage and set the value of the input
 window.addEventListener('DOMContentLoaded', async () => {
     config = await loadExtStorage();
-
-    const isIframe = inIframe();
-    if(isIframe) {
-        setTimeout(() => {
-            requestMediaAccess();
-            requestClipboardAccess();
-        }, 5000);
-    }
-
-    const allowRecoringElem = document.getElementById('allowRecording');
-    if (allowRecoringElem) {
-        allowRecoringElem.addEventListener('change', async() => {
-            requestMediaAccess();
-        });
-    }
-
-    const allowClipboardElem = document.getElementById('allowClipboard');
-    if (allowClipboardElem) {
-        allowClipboardElem.addEventListener('change', async() => {
-            requestClipboardAccess();
-        });
-    }
         	
     // on customEndpoint click toggle the hidden class
     const customEndpoint = document.getElementById('customEndpoint');
@@ -111,6 +89,34 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
     if (!config.advancedDisplaySettings) {
         toggleHidden('#advanced-display-settings')();
+    }
+
+    const allowRecoringElem = document.getElementById('allowRecording');
+    if (allowRecoringElem) {
+        allowRecoringElem.checked = await checkMediaAccess((permission) => {
+            if (permission.state === 'granted') {
+                allowRecoringElem.checked = true;
+            } else {
+                allowRecoringElem.checked = false;
+            }
+        });
+
+        allowRecoringElem.addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            let hasPermission = await checkMediaAccess();
+            if(hasPermission) {
+                alert('Microphone access already given to Voice Extension ✅');
+                return;
+            }
+
+            hasPermission = await requestMediaAccess();
+            
+            if(!hasPermission) {
+                allowRecoringElem.checked = false;
+                alert('Microphone access not given to Voice Extension ❌ Please change your page permission settings to use this extension!');
+            }
+        });
     }
 });
 

@@ -1,19 +1,28 @@
-import { getExtResUrl, dispatchWindowMessage, loadFromExtStorage, sendToRuntime, loadExtStorage, addExtensionMessageActionListener } from "../service.js";
+import { getExtResUrl, dispatchWindowMessage, loadFromExtStorage, sendToRuntime, loadExtStorage, addExtensionMessageActionListener, openOptionsPage } from "../service.js";
 import { STATUS, ACTIONS, config as defaultConf } from "../config.js";
 import recorder from "../recorder.js";
 
+console.log('Voice Extension Recorder iFrame loaded');
+
+injectStyles();
 let config = defaultConf;
-const { recordButton, img, style } = createRecordButton();
+const recordButton = document.querySelector('button');
+const img = document.querySelector('img');
+setStatus(STATUS.stop);
 
 (async () => {
-    console.log('Voice Extension Recorder iFrame loaded');
-
     config = await loadExtStorage();
-
-    createUI();
     
-    recordButton.addEventListener('click', () => {
-        recorder.toggleRecording();
+    recordButton.addEventListener('click', async () => {
+        if(await checkApiKey()) {
+            recorder.toggleRecording();
+        }
+    });
+    
+    addExtensionMessageActionListener(ACTIONS.toggleRecording, async () => {
+        if(await checkApiKey()) {
+            recorder.toggleRecording();
+        }
     });
 
     addEventListener(ACTIONS.startedRecording, () => {
@@ -40,27 +49,39 @@ const { recordButton, img, style } = createRecordButton();
             setStatus(STATUS.stop);
         }
     });
-
-    // Listen to keyboard shortcuts
-    addExtensionMessageActionListener(ACTIONS.toggleRecording, () => {
-        recorder.toggleRecording();
-    });
 })();
 
-function createRecordButton() {
-    const recordButton = document.createElement('button');
-    recordButton.id = config.extBtnId;
-    recordButton.ariaPressed = false;
-    recordButton.title = 'Toggle audio (Ctrl+Shift+K)';
-    const img = document.createElement('img');
-    recordButton.appendChild(img);
-    const style = document.createElement('style');
-
-    return {
-        recordButton,
-        img,
-        style
+async function checkApiKey() {
+    let apiKey = await loadFromExtStorage('apiKey');
+    if(!apiKey) {
+        openOptionsPageDialog('No API key set!');
+        return false;
     }
+    return true;
+}
+
+function openOptionsPageDialog(message = '') {
+    const choice = confirm(message + ' Would you like to open the options page and set your API key?');
+    if(choice){
+        openOptionsPage();
+        location.reload();
+    }
+}
+
+async function injectStyles() {
+    const style = document.createElement('style');
+    let btnCss = await loadFromExtStorage('btnCss');
+
+    style.innerHTML = `
+        #${config.extBtnId} {
+            ${btnCss}
+        }
+        #${config.extBtnId} > img { 
+            width: 16; 
+            height: 16;
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 function setStatus(status) {
@@ -68,26 +89,6 @@ function setStatus(status) {
     recordButton.style.background = status.color
     sendToRuntime({ action: ACTIONS.badge, data: status });
 }
-
-async function createUI() {
-    const showButton = await loadFromExtStorage('showButton');
-    const injectRecordButtonUrls = await loadFromExtStorage('injectRecordButtonUrls');
-    let btnCss = await loadFromExtStorage('btnCss');
-
-    setStatus(STATUS.stop)
-
-    const matchedUrl = injectRecordButtonUrls?.split(',').some(url => window.location.href.includes(url));
-    console.log(matchedUrl, showButton, injectRecordButtonUrls, btnCss)
-
-    if (showButton || matchedUrl) {
-        document.body.appendChild(recordButton);
-
-        // Insert the style tag into the document
-        style.innerHTML = '#' + config.extBtnId + '{' + btnCss + '} #' + config.extBtnId + ' > img { width: 16; height = 16;}';
-        document.head.appendChild(style);
-    }
-}
-
 
 async function sendToWhisperAPI(blob) {
     const apiKey = await loadFromExtStorage('apiKey');
@@ -135,23 +136,6 @@ async function sendToWhisperAPI(blob) {
             dispatchWindowMessage(ACTIONS.resetRecording);
         });
 }
-
-// function copyTextToClipboard(text) {
-
-//     if (!navigator.clipboard) {
-//         fallbackCopyTextToClipboard(text);
-//         return;
-//     }
-
-//     // Use the Clipboard API to write the text to the clipboard
-//     navigator.clipboard.writeText(text)
-//         .then(() => {
-//             console.log('Text copied to clipboard:', text);
-//         })
-//         .catch(error => {
-//             console.error('Error copying text to clipboard:', error);
-//         });
-// }
 
 function copyTextToClipboard(text) {
     // Create a temporary textarea element and use old execCommand API
