@@ -23,9 +23,8 @@ Use the keyboard ⌨️ shortcut Ctrl + Shift + K to start ▶️ and stop ⏹�
 This extension utilizes Whisper from OpenAI for transcribing recordings, offering fast transcriptions in a variety of languages. You can customize the API endpoint and key if you have Whisper locally installed or prefer another transcription service. The only data stored permanently in the browser are the extension settings.
 
 ## 🛡️ Extension Permissions
-- **use microphone**: Required to record your voice.
+- **microphone**: Required to record your voice.
 - **tabs**: Required to inject the recording button into the ChatGPT interface (and other pages) and paste transcriptions.
-- **clipboardWrite**: Required to copy the transcription to your clipboard.
 - **storage**: Required to store the settings you find below.
 - **commands**: Required to bind the keyboard shortcut.
 
