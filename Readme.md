@@ -2,7 +2,7 @@
 
 # Voice to Text Extension
 ## Overview
-The Voice to Text extension provides an open transcription integration for any webpage, allowing you to use your voice as prompt input. While initially designed to bring the voice input from the ChatGPT mobile app to the browser, this extension can be utilized on any website.
+The Voice to Text extension provides an open transcription integration for any webpage, allowing you to use your voice as prompt input. While initially designed to bring the voice input feature from the ChatGPT mobile app to the browser, this extension can be utilized on any website.
 
 ## 🚀 Features
 - **Voice to Text**: Record your speech and use the transcription as input for ChatGPT or any other webpage.
