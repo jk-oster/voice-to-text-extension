@@ -35,3 +35,6 @@ This extension utilizes Whisper from OpenAI for transcribing recordings, offerin
 - open the browsers extension settings
 - click "load umpacked extension" and select the `dist` folder to install the extension
 - the options page should open automatically now
+
+## Contact & contribution
+If you need any support feel free to comment in de discussions or open up an issue. You can also contact me though my [website](https://jakobosterberger.com). Contribution, pull requests and suggestions for improvements are very welcome.
