@@ -67,8 +67,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     customEndpoint.addEventListener('click', toggleHidden('#custom-endpoint-options'));
     const advancedDisplaySettings = document.getElementById('advancedDisplaySettings');
     advancedDisplaySettings.addEventListener('click', toggleHidden('#advanced-display-settings'));
-
-    // ['apiUrl', 'apiKey', 'copyToClipboard', 'insertIntoInput', 'showButton']
+    const showButton = document.getElementById('showButton');
+    showButton.addEventListener('click', toggleHidden('#injectRecordButtonUrlsField'));
+    
     for (const elem of [...inputs, ...textareas]) {
 
         const value = get(elem.name, config);
@@ -89,6 +90,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
     if (!config.advancedDisplaySettings) {
         toggleHidden('#advanced-display-settings')();
+    }
+    if (config.showButton) {
+        toggleHidden('#injectRecordButtonUrlsField')();
     }
 
     const allowRecoringElem = document.getElementById('allowRecording');
@@ -111,7 +115,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             hasPermission = await requestMediaAccess();
-            
+
             if(!hasPermission) {
                 allowRecoringElem.checked = false;
                 alert('Microphone access not given to Voice Extension ❌ Please change your page permission settings to use this extension!');
