@@ -38,3 +38,6 @@ This extension utilizes Whisper from OpenAI for transcribing recordings, offerin
 
 ## Contact & contribution
 If you need any support feel free to comment in de discussions or open up an issue. You can also contact me though my [website](https://jakobosterberger.com). Contribution, pull requests and suggestions for improvements are very welcome.
+
+## Credits
+Thank's to OpenAI Whisper for their awesome translation service. Furthermore, kodos to the creator of the Vite Chrome Extension Plugin for enabling fast and easy extension development!
