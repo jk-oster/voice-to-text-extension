@@ -1,5 +1,6 @@
 {
   "name": "Voice to text",
+  "description": "Use your voice as input for your browser on any webpage.",
   "version": "0.1.1",
   "type": "module",
   "scripts": {
